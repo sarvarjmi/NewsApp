@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
@@ -21,6 +22,16 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val properties = Properties()
+        val localPropertiesFile = project.rootProject.file("local.properties")
+        if (localPropertiesFile.exists()) {
+            properties.load(localPropertiesFile.inputStream())
+        }
+
+        val apiKey = properties.getProperty("NEWS_API_KEY") ?: ""
+        buildConfigField("String", "API_KEY", "\"$apiKey\"")
+        buildConfigField("String", "BASE_URL", "\"https://newsapi.org/v2/\"")
     }
 
     buildTypes {
@@ -39,6 +50,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -95,6 +107,7 @@ dependencies {
     // Logging & Utilities
     implementation(libs.timber)
     implementation(libs.kotlinx.coroutines.android)
+    compileOnly(libs.google.errorprone.annotations)
 
     // Testing
     testImplementation(libs.junit)

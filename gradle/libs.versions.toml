@@ -103,6 +103,7 @@ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-co
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 okhttp-mockwebserver = { group = "com.squareup.okhttp3", name = "mockwebserver", version.ref = "okhttp" }
+google-errorprone-annotations = { group = "com.google.errorprone", name = "error_prone_annotations", version = "2.50.0" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
