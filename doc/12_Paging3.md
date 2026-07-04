@@ -1,7 +1,5 @@
 # NewsApp
 
-# 12_Paging3.md
-
 > **Phase:** Data Layer
 >
 > **Module:** Pagination
