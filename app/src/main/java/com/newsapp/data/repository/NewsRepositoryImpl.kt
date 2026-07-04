@@ -7,7 +7,7 @@ import com.newsapp.data.local.dao.BookmarkDao
 import com.newsapp.data.local.mapper.toDomain
 import com.newsapp.data.local.mapper.toEntity
 import com.newsapp.data.remote.api.ApiConstants
-import com.newsapp.data.remote.api.NewsApiService
+import com.newsapp.data.remote.datasource.RemoteNewsDataSource
 import com.newsapp.data.remote.paging.NewsPagingSource
 import com.newsapp.domain.model.Article
 import com.newsapp.domain.repository.NewsRepository
@@ -25,7 +25,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class NewsRepositoryImpl @Inject constructor(
-    private val newsApiService: NewsApiService,
+    private val remoteDataSource: RemoteNewsDataSource,
     private val bookmarkDao: BookmarkDao
 ) : NewsRepository {
 
@@ -47,7 +47,7 @@ class NewsRepositoryImpl @Inject constructor(
             config = pagingConfig,
             pagingSourceFactory = {
                 NewsPagingSource(
-                    newsApiService = newsApiService,
+                    remoteDataSource = remoteDataSource,
                     category = category
                 )
             }
@@ -59,7 +59,7 @@ class NewsRepositoryImpl @Inject constructor(
             config = pagingConfig,
             pagingSourceFactory = {
                 NewsPagingSource(
-                    newsApiService = newsApiService,
+                    remoteDataSource = remoteDataSource,
                     query = query
                 )
             }
@@ -68,7 +68,6 @@ class NewsRepositoryImpl @Inject constructor(
 
     override suspend fun refreshNews() {
         // Paging 3 automatically handles refresh via the UI layer's 'adapter.refresh()'.
-        // This method can be expanded to include cache invalidation if needed.
     }
 
     override suspend fun saveBookmark(article: Article) {
