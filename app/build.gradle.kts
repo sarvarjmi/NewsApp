@@ -67,6 +67,7 @@ dependencies {
     // Dependency Injection (Hilt)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
 
     // Networking (Retrofit & OkHttp)
     implementation(libs.retrofit)

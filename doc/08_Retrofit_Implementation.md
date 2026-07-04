@@ -1,7 +1,5 @@
 # NewsApp
 
-# 08_Retrofit_Implementation.md
-
 > **Phase:** Data Layer
 >
 > **Module:** Retrofit Networking

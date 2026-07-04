@@ -1,7 +1,5 @@
 # NewsApp
 
-# 07_Network_Layer.md
-
 > **Phase:** Data Layer
 >
 > **Module:** Networking Foundation

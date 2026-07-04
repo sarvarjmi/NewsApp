@@ -1,7 +1,5 @@
 # NewsApp
 
-# 06_Hilt_Setup.md
-
 > **Phase:** Dependency Injection
 >
 > **Goal:** Configure Hilt as the Dependency Injection framework for the NewsApp project and establish a scalable dependency graph that supports Clean Architecture, MVVM, Retrofit, Room, Paging 3, WorkManager, and future features.
