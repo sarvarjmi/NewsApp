@@ -3,7 +3,7 @@ package com.newsapp.data.local.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.newsapp.core.common.DatabaseConstants
-import com.newsapp.data.local.dao.NewsDao
+import com.newsapp.data.local.dao.BookmarkDao
 import com.newsapp.data.local.entity.BookmarkEntity
 
 @Database(
@@ -12,5 +12,5 @@ import com.newsapp.data.local.entity.BookmarkEntity
     exportSchema = false
 )
 abstract class NewsDatabase : RoomDatabase() {
-    abstract val newsDao: NewsDao
+    abstract val bookmarkDao: BookmarkDao
 }

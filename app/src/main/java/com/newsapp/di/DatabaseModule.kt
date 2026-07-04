@@ -3,7 +3,7 @@ package com.newsapp.di
 import android.content.Context
 import androidx.room.Room
 import com.newsapp.core.common.DatabaseConstants
-import com.newsapp.data.local.dao.NewsDao
+import com.newsapp.data.local.dao.BookmarkDao
 import com.newsapp.data.local.database.NewsDatabase
 import dagger.Module
 import dagger.Provides
@@ -35,11 +35,11 @@ object DatabaseModule {
     }
 
     /**
-     * Provides the [NewsDao] to interact with the bookmarks table.
+     * Provides the [BookmarkDao] to interact with the bookmarks table.
      */
     @Provides
     @Singleton
-    fun provideNewsDao(database: NewsDatabase): NewsDao {
-        return database.newsDao
+    fun provideBookmarkDao(database: NewsDatabase): BookmarkDao {
+        return database.bookmarkDao
     }
 }
