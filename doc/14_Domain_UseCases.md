@@ -1,7 +1,5 @@
 # NewsApp
 
-# 14_Domain_UseCases.md
-
 > **Phase:** Domain Layer
 >
 > **Module:** Use Cases (Business Logic)
