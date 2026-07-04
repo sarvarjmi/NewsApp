@@ -42,7 +42,9 @@ fun NewsCard(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 1.dp
+        )
     ) {
         Row(
             modifier = Modifier

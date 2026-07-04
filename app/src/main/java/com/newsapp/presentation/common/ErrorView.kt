@@ -35,7 +35,7 @@ fun ErrorView(
         Icon(
             imageVector = Icons.Default.ErrorOutline,
             contentDescription = "Error",
-            modifier = Modifier.size(64.dp),
+            modifier = Modifier.size(MaterialThemeSpacing.extraExtraLarge),
             tint = MaterialTheme.colorScheme.error
         )
         Spacer(modifier = Modifier.height(MaterialThemeSpacing.medium))

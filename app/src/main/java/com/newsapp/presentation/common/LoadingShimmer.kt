@@ -31,9 +31,9 @@ fun LoadingShimmer(
     modifier: Modifier = Modifier
 ) {
     val shimmerColors = listOf(
-        Color.LightGray.copy(alpha = 0.6f),
-        Color.LightGray.copy(alpha = 0.2f),
-        Color.LightGray.copy(alpha = 0.6f),
+        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
+        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f),
+        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
     )
 
     val transition = rememberInfiniteTransition(label = "shimmer")
