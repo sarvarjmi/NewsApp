@@ -1,7 +1,5 @@
 # NewsApp
 
-# 04_Clean_Architecture.md
-
 > **Phase:** Architecture Foundation
 >
 > **Goal:** Design a scalable, maintainable, testable, and production-ready architecture before writing any business logic.
