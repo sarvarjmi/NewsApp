@@ -17,8 +17,11 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Implementation of [NewsRepository] using Paging 3 for remote data 
- * and Room for local bookmarking.
+ * Concrete implementation of [NewsRepository] coordinating between remote 
+ * and local data sources.
+ *
+ * This implementation leverages Paging 3 for the remote API data stream 
+ * and Room for bookmark persistence.
  */
 @Singleton
 class NewsRepositoryImpl @Inject constructor(
@@ -28,10 +31,9 @@ class NewsRepositoryImpl @Inject constructor(
 
     /**
      * Paging Configuration:
-     * - [pageSize]: 20. Optimized for the News API limit and mobile data usage.
-     * - [prefetchDistance]: 5. Starts loading the next page when the user is 5 items from the end.
-     * - [enablePlaceholders]: false. Prevents showing "empty" cards when the remote count is uncertain.
-     * - [initialLoadSize]: 20. Matches page size to prevent over-fetching on start.
+     * - [pageSize]: 20. Aligned with News API default limits.
+     * - [prefetchDistance]: 5. Smooth scrolling by fetching next page in advance.
+     * - [enablePlaceholders]: false. Simplifies UI logic by only showing loaded items.
      */
     private val pagingConfig = PagingConfig(
         pageSize = ApiConstants.DEFAULT_PAGE_SIZE,
@@ -64,21 +66,35 @@ class NewsRepositoryImpl @Inject constructor(
         ).flow
     }
 
-    override suspend fun upsertArticle(article: Article) {
+    override suspend fun refreshNews() {
+        // Paging 3 automatically handles refresh via the UI layer's 'adapter.refresh()'.
+        // This method can be expanded to include cache invalidation if needed.
+    }
+
+    override suspend fun saveBookmark(article: Article) {
         bookmarkDao.upsert(article.toEntity())
     }
 
-    override suspend fun deleteArticle(article: Article) {
+    override suspend fun removeBookmark(article: Article) {
         bookmarkDao.delete(article.toEntity())
     }
 
-    override fun getBookmarkedArticles(): Flow<List<Article>> {
+    override suspend fun toggleBookmark(article: Article) {
+        val exists = bookmarkDao.isBookmarked(article.url)
+        if (exists) {
+            bookmarkDao.delete(article.toEntity())
+        } else {
+            bookmarkDao.upsert(article.toEntity())
+        }
+    }
+
+    override fun observeBookmarks(): Flow<List<Article>> {
         return bookmarkDao.getBookmarks().map { entities ->
             entities.map { it.toDomain() }
         }
     }
 
-    override suspend fun getArticleByUrl(url: String): Article? {
-        return bookmarkDao.getBookmarkByUrl(url)?.toDomain()
+    override suspend fun isBookmarked(url: String): Boolean {
+        return bookmarkDao.isBookmarked(url)
     }
 }

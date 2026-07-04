@@ -1,7 +1,5 @@
 # NewsApp
 
-# 13_Repository.md
-
 > **Phase:** Data Layer
 >
 > **Module:** Repository Pattern
