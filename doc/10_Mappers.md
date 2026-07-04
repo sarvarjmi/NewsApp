@@ -1,7 +1,5 @@
 # NewsApp
 
-# 10_Mappers.md
-
 > **Phase:** Data Layer
 >
 > **Module:** Model Mapping
