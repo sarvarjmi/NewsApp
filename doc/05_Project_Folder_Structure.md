@@ -1,7 +1,5 @@
 # NewsApp
 
-# 05_Project_Folder_Structure.md
-
 > **Phase:** Architecture Setup
 >
 > **Goal:** Create a scalable project structure based on Clean Architecture + MVVM that will be used throughout the NewsApp development lifecycle.

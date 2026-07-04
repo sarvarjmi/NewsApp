@@ -27,10 +27,16 @@ import androidx.navigation.compose.rememberNavController
 import com.newsapp.presentation.navigation.NavGraph
 import com.newsapp.presentation.navigation.Route
 import com.newsapp.ui.theme.NewsAppTheme
+import com.newsapp.core.dispatcher.DispatcherProvider
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var dispatcherProvider: DispatcherProvider
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
