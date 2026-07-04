@@ -9,21 +9,22 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.newsapp.presentation.common.SearchBar
+import com.newsapp.presentation.home.NewsPagingList
 import com.newsapp.ui.theme.MaterialThemeSpacing
 
 @Composable
 fun SearchScreen(
+    viewModel: SearchViewModel,
     onNavigateToDetail: (String) -> Unit
 ) {
-    var searchQuery by remember { mutableStateOf("") }
+    val state by viewModel.state.collectAsState()
+    val searchResults = viewModel.searchResults.collectAsLazyPagingItems()
 
     Scaffold { innerPadding ->
         Column(
@@ -38,12 +39,16 @@ fun SearchScreen(
                 modifier = Modifier.padding(MaterialThemeSpacing.medium)
             )
             SearchBar(
-                text = searchQuery,
-                onValueChange = { searchQuery = it },
-                onSearch = { /* TODO */ }
+                text = state.searchQuery,
+                onValueChange = { viewModel.onSearchQueryChanged(it) },
+                onSearch = { /* Handled reactively by flatMapLatest */ }
             )
             Spacer(modifier = Modifier.height(MaterialThemeSpacing.medium))
-            // TODO: Recent searches or search results
+            
+            NewsPagingList(
+                articles = searchResults,
+                onArticleClick = onNavigateToDetail
+            )
         }
     }
 }

@@ -2,6 +2,7 @@ package com.newsapp.presentation.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -9,7 +10,9 @@ import androidx.navigation.toRoute
 import com.newsapp.presentation.bookmarks.BookmarksScreen
 import com.newsapp.presentation.detail.DetailScreen
 import com.newsapp.presentation.home.HomeScreen
+import com.newsapp.presentation.home.HomeViewModel
 import com.newsapp.presentation.search.SearchScreen
+import com.newsapp.presentation.search.SearchViewModel
 
 @Composable
 fun NavGraph(
@@ -22,7 +25,9 @@ fun NavGraph(
         modifier = modifier
     ) {
         composable<Route.Home> {
+            val viewModel: HomeViewModel = hiltViewModel()
             HomeScreen(
+                viewModel = viewModel,
                 onNavigateToDetail = { url ->
                     navController.navigate(Route.Detail(url))
                 },
@@ -32,7 +37,9 @@ fun NavGraph(
             )
         }
         composable<Route.Search> {
+            val viewModel: SearchViewModel = hiltViewModel()
             SearchScreen(
+                viewModel = viewModel,
                 onNavigateToDetail = { url ->
                     navController.navigate(Route.Detail(url))
                 }

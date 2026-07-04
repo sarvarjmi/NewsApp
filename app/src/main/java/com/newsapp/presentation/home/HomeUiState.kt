@@ -1,10 +1,13 @@
 package com.newsapp.presentation.home
 
-import com.newsapp.domain.model.Article
-
+/**
+ * UI State for the Home screen.
+ * Paging-specific states (loading, error, list) are managed by PagingData.
+ */
 data class HomeUiState(
-    val isLoading: Boolean = false,
-    val articles: List<Article> = emptyList(),
-    val error: String? = null,
-    val selectedCategory: String = "All"
+    val selectedCategory: String = "General",
+    val categories: List<String> = listOf(
+        "General", "Business", "Technology", "Sports", 
+        "Health", "Science", "Entertainment"
+    )
 )
