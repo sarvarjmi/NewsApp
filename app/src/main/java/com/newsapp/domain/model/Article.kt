@@ -15,5 +15,6 @@ data class Article(
     val urlToImage: String?,
     val publishedAt: String,
     val source: Source,
-    val isBookmarked: Boolean = false
+    val isBookmarked: Boolean = false,
+    val bookmarkedAt: Long? = null
 )

@@ -16,6 +16,7 @@ fun BookmarkEntity.toDomain(): Article {
         content = content,
         urlToImage = urlToImage,
         publishedAt = publishedAt,
+        bookmarkedAt = bookmarkedAt,
         source = Source(
             id = sourceId,
             name = sourceName
@@ -26,13 +27,6 @@ fun BookmarkEntity.toDomain(): Article {
 
 /**
  * Maps [Article] from the domain layer to [BookmarkEntity] for local persistence.
- * 
- * Mapping decisions:
- * - [url]: Maintained as the [PrimaryKey] to ensure unique entries and efficient lookups.
- * - [title]: Mandatory field persisted directly.
- * - [author], [description], [content], [urlToImage]: Nullable fields preserved to maintain data integrity.
- * - [publishedAt]: ISO 8601 string persisted for chronological sorting.
- * - [source]: Flattened into [sourceId] and [sourceName] as Room does not store complex objects natively without TypeConverters.
  */
 fun Article.toEntity(): BookmarkEntity {
     return BookmarkEntity(
@@ -43,6 +37,7 @@ fun Article.toEntity(): BookmarkEntity {
         content = content,
         urlToImage = urlToImage,
         publishedAt = publishedAt,
+        bookmarkedAt = bookmarkedAt ?: System.currentTimeMillis(),
         sourceId = source.id,
         sourceName = source.name
     )
