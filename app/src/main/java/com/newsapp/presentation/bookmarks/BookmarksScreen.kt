@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.newsapp.presentation.common.EmptyState
+import com.newsapp.ui.theme.MaterialThemeSpacing
 
 @Composable
 fun BookmarksScreen(
@@ -26,7 +27,7 @@ fun BookmarksScreen(
                 text = "Bookmarks",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(MaterialThemeSpacing.medium)
             )
             
             // Empty state placeholder

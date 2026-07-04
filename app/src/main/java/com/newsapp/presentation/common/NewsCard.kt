@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.newsapp.ui.theme.MaterialThemeSpacing
 
 @Composable
 fun NewsCard(
@@ -37,7 +38,7 @@ fun NewsCard(
         modifier = modifier
             .fillMaxWidth()
             .clickable { onClick() },
-        shape = RoundedCornerShape(12.dp),
+        shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
@@ -45,7 +46,7 @@ fun NewsCard(
     ) {
         Row(
             modifier = Modifier
-                .padding(12.dp)
+                .padding(MaterialThemeSpacing.small)
                 .fillMaxWidth()
         ) {
             AsyncImage(
@@ -53,10 +54,10 @@ fun NewsCard(
                 contentDescription = null,
                 modifier = Modifier
                     .size(100.dp)
-                    .clip(RoundedCornerShape(8.dp)),
+                    .clip(MaterialTheme.shapes.small),
                 contentScale = ContentScale.Crop
             )
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(MaterialThemeSpacing.small))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = source,
@@ -64,7 +65,7 @@ fun NewsCard(
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold
                 )
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(MaterialThemeSpacing.extraSmall))
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,
@@ -73,7 +74,7 @@ fun NewsCard(
                     fontWeight = FontWeight.SemiBold
                 )
                 if (description != null) {
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(MaterialThemeSpacing.extraSmall))
                     Text(
                         text = description,
                         style = MaterialTheme.typography.bodySmall,
@@ -82,7 +83,7 @@ fun NewsCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(MaterialThemeSpacing.small))
                 Text(
                     text = date,
                     style = MaterialTheme.typography.labelSmall,

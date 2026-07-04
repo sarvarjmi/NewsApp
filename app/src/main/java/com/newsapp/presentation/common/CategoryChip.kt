@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.newsapp.ui.theme.MaterialThemeSpacing
 
 @Composable
 fun CategoryChip(
@@ -25,7 +26,7 @@ fun CategoryChip(
                 style = MaterialTheme.typography.labelLarge
             )
         },
-        modifier = modifier.padding(horizontal = 4.dp),
+        modifier = modifier.padding(horizontal = MaterialThemeSpacing.extraSmall),
         colors = FilterChipDefaults.filterChipColors(
             selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
             selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,

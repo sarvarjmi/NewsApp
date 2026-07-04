@@ -25,6 +25,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.newsapp.ui.theme.MaterialThemeSpacing
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,19 +68,19 @@ fun DetailScreen(
                 contentScale = ContentScale.Crop
             )
             
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(modifier = Modifier.padding(MaterialThemeSpacing.medium)) {
                 Text(
                     text = "Sample News Title - Full Article View",
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(MaterialThemeSpacing.small))
                 Text(
                     text = "Published in BBC News • 2 hours ago",
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(MaterialThemeSpacing.medium))
                 Text(
                     text = "This is where the full content of the article would go. ".repeat(20),
                     style = MaterialTheme.typography.bodyLarge,

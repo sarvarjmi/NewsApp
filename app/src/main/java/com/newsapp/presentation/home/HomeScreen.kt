@@ -27,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.newsapp.presentation.common.CategoryChip
 import com.newsapp.presentation.common.NewsCard
+import com.newsapp.ui.theme.MaterialThemeSpacing
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,7 +62,10 @@ fun HomeScreen(
                 .fillMaxSize()
         ) {
             LazyRow(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                modifier = Modifier.padding(
+                    horizontal = MaterialThemeSpacing.medium,
+                    vertical = MaterialThemeSpacing.small
+                )
             ) {
                 items(categories) { category ->
                     CategoryChip(
@@ -77,7 +81,10 @@ fun HomeScreen(
                     Text(
                         text = "Breaking News",
                         style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                        modifier = Modifier.padding(
+                            horizontal = MaterialThemeSpacing.medium,
+                            vertical = MaterialThemeSpacing.small
+                        ),
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -88,7 +95,10 @@ fun HomeScreen(
                         source = "BBC News",
                         date = "2 hours ago",
                         onClick = { onNavigateToDetail("https://example.com/article/$it") },
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                        modifier = Modifier.padding(
+                            horizontal = MaterialThemeSpacing.medium,
+                            vertical = MaterialThemeSpacing.small
+                        ),
                         description = "This is a sample description for the news article. It provides a brief summary of what the article is about."
                     )
                 }

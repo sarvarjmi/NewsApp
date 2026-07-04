@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.newsapp.presentation.common.SearchBar
+import com.newsapp.ui.theme.MaterialThemeSpacing
 
 @Composable
 fun SearchScreen(
@@ -34,14 +35,14 @@ fun SearchScreen(
                 text = "Search",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(MaterialThemeSpacing.medium)
             )
             SearchBar(
                 text = searchQuery,
                 onValueChange = { searchQuery = it },
                 onSearch = { /* TODO */ }
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(MaterialThemeSpacing.medium))
             // TODO: Recent searches or search results
         }
     }
