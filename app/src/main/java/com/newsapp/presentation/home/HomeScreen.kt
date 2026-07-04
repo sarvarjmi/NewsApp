@@ -48,7 +48,7 @@ fun HomeScreen(
     onNavigateToSearch: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
-    val articles = viewModel.newsArticles.collectAsLazyPagingItems()
+    val articles = viewModel.articles.collectAsLazyPagingItems()
 
     Scaffold(
         topBar = {
@@ -83,7 +83,7 @@ fun HomeScreen(
                         modifier = if (index == 0) Modifier.padding(start = MaterialThemeSpacing.medium) else Modifier,
                         category = category,
                         isSelected = state.selectedCategory == category,
-                        onSelected = { viewModel.onCategorySelected(it) }
+                        onSelected = { viewModel.onEvent(HomeEvent.OnCategorySelected(it)) }
                     )
                 }
             }
@@ -91,7 +91,10 @@ fun HomeScreen(
             // Paginated News List
             NewsPagingList(
                 articles = articles,
-                onArticleClick = onNavigateToDetail
+                onArticleClick = onNavigateToDetail,
+                onBookmarkClick = { article ->
+                    viewModel.onEvent(HomeEvent.OnBookmarkToggled(article))
+                }
             )
         }
     }
@@ -100,7 +103,8 @@ fun HomeScreen(
 @Composable
 fun NewsPagingList(
     articles: LazyPagingItems<Article>,
-    onArticleClick: (String) -> Unit
+    onArticleClick: (String) -> Unit,
+    onBookmarkClick: (Article) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -128,6 +132,8 @@ fun NewsPagingList(
                     imageUrl = article.urlToImage ?: "",
                     source = article.source.name,
                     date = article.publishedAt,
+                    isBookmarked = article.isBookmarked,
+                    onBookmarkClick = { onBookmarkClick(article) },
                     onClick = { onArticleClick(article.url) },
                     modifier = Modifier.padding(
                         horizontal = MaterialThemeSpacing.medium,

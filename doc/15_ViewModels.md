@@ -1,7 +1,5 @@
 # NewsApp
 
-# 15_ViewModels.md
-
 > **Phase:** Presentation Layer
 >
 > **Module:** ViewModels

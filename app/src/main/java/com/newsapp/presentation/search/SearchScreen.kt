@@ -40,14 +40,17 @@ fun SearchScreen(
             )
             SearchBar(
                 text = state.searchQuery,
-                onValueChange = { viewModel.onSearchQueryChanged(it) },
-                onSearch = { /* Handled reactively by flatMapLatest */ }
+                onValueChange = { viewModel.onEvent(SearchEvent.OnQueryChanged(it)) },
+                onSearch = { /* Handled reactively */ }
             )
             Spacer(modifier = Modifier.height(MaterialThemeSpacing.medium))
             
             NewsPagingList(
                 articles = searchResults,
-                onArticleClick = onNavigateToDetail
+                onArticleClick = onNavigateToDetail,
+                onBookmarkClick = { article ->
+                    viewModel.onEvent(SearchEvent.OnBookmarkToggled(article))
+                }
             )
         }
     }

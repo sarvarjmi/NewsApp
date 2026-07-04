@@ -2,7 +2,13 @@ package com.newsapp.presentation.home
 
 /**
  * UI State for the Home screen.
- * Paging-specific states (loading, error, list) are managed by PagingData.
+ * 
+ * Note: Paginated article data and its associated states (Loading, Error, Empty) 
+ * are managed reactively via PagingData in the ViewModel. This state class 
+ * handles additional UI metadata like category selection.
+ *
+ * @property selectedCategory The currently active news category.
+ * @property categories The list of available categories for the user to filter.
  */
 data class HomeUiState(
     val selectedCategory: String = "General",
