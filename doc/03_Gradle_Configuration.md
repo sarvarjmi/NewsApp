@@ -1,7 +1,5 @@
 # NewsApp
 
-# 03_Gradle_Configuration.md
-
 > **Phase:** Foundation
 >
 > **Goal:** Configure the entire Gradle build system using Kotlin DSL and Version Catalog while keeping the project scalable, maintainable, and aligned with modern Android development best practices.
