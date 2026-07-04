@@ -1,5 +1,7 @@
 package com.newsapp.di
 
+import com.newsapp.data.local.datasource.LocalNewsDataSource
+import com.newsapp.data.local.datasource.LocalNewsDataSourceImpl
 import com.newsapp.data.remote.datasource.RemoteNewsDataSource
 import com.newsapp.data.remote.datasource.RemoteNewsDataSourceImpl
 import dagger.Binds
@@ -17,4 +19,10 @@ abstract class DataSourceModule {
     abstract fun bindRemoteNewsDataSource(
         remoteNewsDataSourceImpl: RemoteNewsDataSourceImpl
     ): RemoteNewsDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindLocalNewsDataSource(
+        localNewsDataSourceImpl: LocalNewsDataSourceImpl
+    ): LocalNewsDataSource
 }

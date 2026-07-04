@@ -3,7 +3,7 @@ package com.newsapp.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.newsapp.data.local.dao.BookmarkDao
+import com.newsapp.data.local.datasource.LocalNewsDataSource
 import com.newsapp.data.local.mapper.toDomain
 import com.newsapp.data.local.mapper.toEntity
 import com.newsapp.data.remote.api.ApiConstants
@@ -21,12 +21,12 @@ import javax.inject.Singleton
  * and local data sources.
  *
  * This implementation leverages Paging 3 for the remote API data stream 
- * and Room for bookmark persistence.
+ * and a Local Data Source for bookmark persistence.
  */
 @Singleton
 class NewsRepositoryImpl @Inject constructor(
     private val remoteDataSource: RemoteNewsDataSource,
-    private val bookmarkDao: BookmarkDao
+    private val localDataSource: LocalNewsDataSource
 ) : NewsRepository {
 
     /**
@@ -71,29 +71,29 @@ class NewsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun saveBookmark(article: Article) {
-        bookmarkDao.upsert(article.toEntity())
+        localDataSource.upsertBookmark(article.toEntity())
     }
 
     override suspend fun removeBookmark(article: Article) {
-        bookmarkDao.delete(article.toEntity())
+        localDataSource.deleteBookmark(article.toEntity())
     }
 
     override suspend fun toggleBookmark(article: Article) {
-        val exists = bookmarkDao.isBookmarked(article.url)
+        val exists = localDataSource.isBookmarked(article.url)
         if (exists) {
-            bookmarkDao.delete(article.toEntity())
+            localDataSource.deleteBookmark(article.toEntity())
         } else {
-            bookmarkDao.upsert(article.toEntity())
+            localDataSource.upsertBookmark(article.toEntity())
         }
     }
 
     override fun observeBookmarks(): Flow<List<Article>> {
-        return bookmarkDao.getBookmarks().map { entities ->
+        return localDataSource.getBookmarks().map { entities ->
             entities.map { it.toDomain() }
         }
     }
 
     override suspend fun isBookmarked(url: String): Boolean {
-        return bookmarkDao.isBookmarked(url)
+        return localDataSource.isBookmarked(url)
     }
 }
