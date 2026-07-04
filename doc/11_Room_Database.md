@@ -1,7 +1,5 @@
 # NewsApp
 
-# 11_Room_Database.md
-
 > **Phase:** Data Layer
 >
 > **Module:** Local Persistence
