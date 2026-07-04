@@ -1,7 +1,5 @@
 # NewsApp
 
-# 09_DTO_Models.md
-
 > **Phase:** Data Layer
 >
 > **Module:** API Data Transfer Objects (DTO)
