@@ -1,7 +1,5 @@
 # NewsApp
 
-# 20_Detail_Screen.md
-
 > **Phase:** Presentation Layer
 >
 > **Module:** Article Detail Screen
