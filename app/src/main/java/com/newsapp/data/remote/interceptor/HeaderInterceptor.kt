@@ -11,12 +11,18 @@ import javax.inject.Singleton
 @Singleton
 class HeaderInterceptor @Inject constructor() : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        val request = chain.request().newBuilder()
-            .addHeader("Accept", "application/json")
-            .addHeader("Content-Type", "application/json")
-            // Add other common headers like User-Agent if needed
-            .build()
+        val originalRequest = chain.request()
         
-        return chain.proceed(request)
+        val requestBuilder = originalRequest.newBuilder()
+            .addHeader("User-Agent", "NewsApp/1.0 (Android)")
+
+        // Performance: Only add JSON headers for News API requests.
+        // Images and other static assets don't need these.
+        if (originalRequest.url.host.contains("newsapi.org")) {
+            requestBuilder.addHeader("Accept", "application/json")
+            requestBuilder.addHeader("Content-Type", "application/json")
+        }
+        
+        return chain.proceed(requestBuilder.build())
     }
 }

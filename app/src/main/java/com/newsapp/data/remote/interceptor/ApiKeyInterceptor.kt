@@ -15,6 +15,12 @@ class ApiKeyInterceptor @Inject constructor() : Interceptor {
         val originalRequest = chain.request()
         val originalUrl = originalRequest.url
 
+        // Performance & Bug Fix: Only add the API key to requests targeting the News API host.
+        // Adding it to image requests (e.g. apnews.com) can cause those servers to reject the request.
+        if (!originalUrl.host.contains("newsapi.org")) {
+            return chain.proceed(originalRequest)
+        }
+
         val url = originalUrl.newBuilder()
             .addQueryParameter("apiKey", ApiConstants.API_KEY)
             .build()
