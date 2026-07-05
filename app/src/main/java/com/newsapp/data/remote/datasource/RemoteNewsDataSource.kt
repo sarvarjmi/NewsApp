@@ -1,5 +1,7 @@
 package com.newsapp.data.remote.datasource
 
+import com.newsapp.core.dispatcher.DispatcherProvider
+import com.newsapp.core.error.ErrorMapper
 import com.newsapp.core.network.NetworkResult
 import com.newsapp.core.network.safeApiCall
 import com.newsapp.data.remote.api.NewsApiService
@@ -17,20 +19,30 @@ interface RemoteNewsDataSource {
 
 /**
  * Implementation of [RemoteNewsDataSource] using [NewsApiService] and [safeApiCall].
+ * 
+ * This class coordinates the network execution, threading, and error mapping.
  */
 @Singleton
 class RemoteNewsDataSourceImpl @Inject constructor(
-    private val newsApiService: NewsApiService
+    private val newsApiService: NewsApiService,
+    private val errorMapper: ErrorMapper,
+    private val dispatcherProvider: DispatcherProvider
 ) : RemoteNewsDataSource {
 
     override suspend fun getTopHeadlines(category: String?, page: Int, pageSize: Int): NetworkResult<NewsResponseDto> {
-        return safeApiCall {
+        return safeApiCall(
+            dispatcher = dispatcherProvider.io,
+            mapper = errorMapper
+        ) {
             newsApiService.getTopHeadlines(category = category, page = page, pageSize = pageSize)
         }
     }
 
     override suspend fun searchNews(query: String, page: Int, pageSize: Int): NetworkResult<NewsResponseDto> {
-        return safeApiCall {
+        return safeApiCall(
+            dispatcher = dispatcherProvider.io,
+            mapper = errorMapper
+        ) {
             newsApiService.searchNews(query = query, page = page, pageSize = pageSize)
         }
     }

@@ -1,7 +1,5 @@
 # NewsApp
 
-# 23_Error_Handling.md
-
 > **Phase:** Cross-Cutting Architecture
 >
 > **Module:** Error Handling & Resilience

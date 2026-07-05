@@ -10,8 +10,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hasRoute
@@ -20,6 +26,9 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.newsapp.core.dispatcher.DispatcherProvider
+import com.newsapp.core.network.NetworkMonitor
+import com.newsapp.presentation.common.OfflineBanner
+import com.newsapp.presentation.common.SnackbarManager
 import com.newsapp.presentation.navigation.Destination
 import com.newsapp.presentation.navigation.NavGraph
 import com.newsapp.presentation.navigation.NewsBottomBar
@@ -34,6 +43,12 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var dispatcherProvider: DispatcherProvider
 
+    @Inject
+    lateinit var networkMonitor: NetworkMonitor
+
+    @Inject
+    lateinit var snackbarManager: SnackbarManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -42,6 +57,23 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentDestination = navBackStackEntry?.destination
+                
+                val isOnline by networkMonitor.isOnline.collectAsState(initial = true)
+                val snackbarHostState = remember { SnackbarHostState() }
+
+                // Listen to global snackbar messages
+                LaunchedEffect(Unit) {
+                    snackbarManager.messages.collect { message ->
+                        val result = snackbarHostState.showSnackbar(
+                            message = message.message,
+                            actionLabel = message.actionLabel,
+                            duration = message.duration
+                        )
+                        if (result == SnackbarResult.ActionPerformed) {
+                            message.onAction?.invoke()
+                        }
+                    }
+                }
 
                 // Only show bottom bar for main destinations (Home, Search, Bookmarks)
                 val showBottomBar = currentDestination?.hierarchy?.any { 
@@ -50,6 +82,9 @@ class MainActivity : ComponentActivity() {
 
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
+                    topBar = {
+                        OfflineBanner(isVisible = !isOnline)
+                    },
                     bottomBar = {
                         if (showBottomBar) {
                             NewsBottomBar(
@@ -57,7 +92,8 @@ class MainActivity : ComponentActivity() {
                                 currentDestination = currentDestination
                             )
                         }
-                    }
+                    },
+                    snackbarHost = { SnackbarHost(snackbarHostState) }
                 ) { innerPadding ->
                     NavGraph(
                         navController = navController,
