@@ -2,6 +2,7 @@ package com.newsapp.presentation.detail
 
 import android.content.Intent
 import android.net.Uri
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -74,8 +75,14 @@ fun DetailScreen(
             when (effect) {
                 DetailSideEffect.NavigateBack -> onBackClick()
                 is DetailSideEffect.OpenBrowser -> {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(effect.url))
-                    context.startActivity(intent)
+                    try {
+                        val customTabsIntent = CustomTabsIntent.Builder().build()
+                        customTabsIntent.launchUrl(context, Uri.parse(effect.url))
+                    } catch (e: Exception) {
+                        // Fallback to system browser
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(effect.url))
+                        context.startActivity(intent)
+                    }
                 }
                 is DetailSideEffect.ShareArticle -> {
                     val intent = Intent(Intent.ACTION_SEND).apply {
