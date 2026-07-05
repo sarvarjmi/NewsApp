@@ -29,7 +29,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -40,6 +42,11 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.newsapp.presentation.common.ErrorView
 
+/**
+ * The WebView Screen implementation for NewsApp.
+ * 
+ * Includes comprehensive lifecycle management, history support, and security.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WebViewScreen(
@@ -50,6 +57,14 @@ fun WebViewScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    
+    // Performance: Keep reference to WebView for history management
+    var webViewInstance by remember { mutableStateOf<WebView?>(null) }
+
+    // Handle System Back Button
+    BackHandler(enabled = webViewInstance?.canGoBack() == true) {
+        webViewInstance?.goBack()
+    }
 
     LaunchedEffect(url) {
         viewModel.onEvent(WebViewEvent.OnUrlChanged(url))
@@ -58,7 +73,14 @@ fun WebViewScreen(
     LaunchedEffect(viewModel.effect) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                WebViewSideEffect.NavigateBack -> onBackClick()
+                WebViewSideEffect.NavigateBack -> {
+                    // Check if internal history exists before exiting
+                    if (webViewInstance?.canGoBack() == true) {
+                        webViewInstance?.goBack()
+                    } else {
+                        onBackClick()
+                    }
+                }
                 is WebViewSideEffect.OpenInExternalBrowser -> {
                     context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(effect.url)))
                 }
@@ -131,7 +153,8 @@ fun WebViewScreen(
                     WebViewContainer(
                         url = url,
                         onEvent = { viewModel.onEvent(it) },
-                        webViewClientFactory = webViewClientFactory
+                        webViewClientFactory = webViewClientFactory,
+                        onWebViewCreated = { webViewInstance = it }
                     )
                 }
             }
@@ -144,7 +167,8 @@ fun WebViewScreen(
 private fun WebViewContainer(
     url: String,
     onEvent: (WebViewEvent) -> Unit,
-    webViewClientFactory: WebViewClientFactory
+    webViewClientFactory: WebViewClientFactory,
+    onWebViewCreated: (WebView) -> Unit
 ) {
     AndroidView(
         modifier = Modifier.fillMaxSize(),
@@ -163,16 +187,14 @@ private fun WebViewContainer(
                     builtInZoomControls = true
                     displayZoomControls = false
                     
-                    // Security: Disable file access
+                    // Security
                     allowFileAccess = false
                     allowContentAccess = false
                     
-                    // Safe Browsing
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                         safeBrowsingEnabled = true
                     }
                     
-                    // Mixed content disabled by default in newer Android, but explicitly set for clarity
                     mixedContentMode = android.webkit.WebSettings.MIXED_CONTENT_NEVER_ALLOW
                 }
                 
@@ -186,10 +208,18 @@ private fun WebViewContainer(
                     }
                 }
                 loadUrl(url)
+                onWebViewCreated(this)
             }
         },
         update = { webView ->
             // Update logic if needed
+        },
+        onRelease = { webView ->
+            webView.stopLoading()
+            webView.loadUrl("about:blank")
+            webView.clearHistory()
+            webView.removeAllViews()
+            webView.destroy()
         }
     )
 }

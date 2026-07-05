@@ -1,7 +1,5 @@
 # NewsApp
 
-# 24_Performance.md
-
 > **Phase:** Cross-Cutting Architecture
 >
 > **Module:** Performance Optimization

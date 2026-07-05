@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -77,11 +78,13 @@ fun NewsCard(
         ) {
             AsyncImage(
                 model = imageUrl,
-                contentDescription = null, // Title provides enough context
+                contentDescription = null,
+                placeholder = ColorPainter(MaterialTheme.colorScheme.surfaceVariant),
+                error = ColorPainter(MaterialTheme.colorScheme.errorContainer),
                 modifier = Modifier
                     .size(100.dp)
                     .clip(MaterialTheme.shapes.small),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
             )
             
             Spacer(modifier = Modifier.width(MaterialThemeSpacing.small))

@@ -27,6 +27,7 @@ import java.nio.charset.StandardCharsets
 @Composable
 fun NavGraph(
     navController: NavHostController,
+    isOnline: Boolean,
     modifier: Modifier = Modifier
 ) {
     NavHost(
@@ -47,6 +48,7 @@ fun NavGraph(
                 val viewModel: HomeViewModel = hiltViewModel()
                 HomeScreen(
                     viewModel = viewModel,
+                    isOnline = isOnline,
                     onNavigateToDetail = { url ->
                         val encodedUrl = URLEncoder.encode(url, StandardCharsets.UTF_8.toString())
                         navController.navigate(Routes.Detail(encodedUrl))
@@ -65,6 +67,7 @@ fun NavGraph(
                 val viewModel: SearchViewModel = hiltViewModel()
                 SearchScreen(
                     viewModel = viewModel,
+                    isOnline = isOnline,
                     onNavigateToDetail = { url ->
                         val encodedUrl = URLEncoder.encode(url, StandardCharsets.UTF_8.toString())
                         navController.navigate(Routes.Detail(encodedUrl))

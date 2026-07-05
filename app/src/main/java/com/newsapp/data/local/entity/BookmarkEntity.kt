@@ -15,7 +15,8 @@ import androidx.room.PrimaryKey
     tableName = "bookmarks",
     indices = [
         Index(value = ["publishedAt"]),
-        Index(value = ["bookmarkedAt"])
+        Index(value = ["bookmarkedAt"]),
+        Index(value = ["title"]) // For faster search/lookup
     ]
 )
 data class BookmarkEntity(

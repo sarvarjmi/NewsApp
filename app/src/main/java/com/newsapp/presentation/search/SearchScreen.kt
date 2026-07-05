@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -22,38 +23,33 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.newsapp.presentation.common.NewsPagingList
 import com.newsapp.presentation.common.SearchBar
-import com.newsapp.presentation.home.NewsPagingList
 import com.newsapp.ui.theme.MaterialThemeSpacing
 
 /**
  * The Search Screen implementation for NewsApp.
  * 
- * Provides a debounced, reactive search experience with Paging 3 integration.
- * It handles loading, empty results, success, and error states gracefully.
- *
- * @param viewModel The [SearchViewModel] that manages the search state and results.
- * @param onNavigateToDetail Callback to navigate to the article detail screen.
+ * Performance Optimizations:
+ * 1. [rememberLazyListState]: Persists result scroll position.
+ * 2. Shared Paging Logic: Uses [NewsPagingList] with stable keys and content types.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
     viewModel: SearchViewModel,
+    isOnline: Boolean,
     onNavigateToDetail: (String) -> Unit
 ) {
-    // Collect UI state with lifecycle awareness
     val state by viewModel.state.collectAsStateWithLifecycle()
-    
-    // Collect paginated search results
     val searchResults = viewModel.searchResults.collectAsLazyPagingItems()
     
+    val lazyListState = rememberLazyListState()
     val focusRequester = remember { FocusRequester() }
     val pullToRefreshState = rememberPullToRefreshState()
     
-    // Determine if refreshing based on Paging load state
     val isRefreshing = searchResults.loadState.refresh is LoadState.Loading && searchResults.itemCount > 0
 
-    // Handle side effects (navigation)
     LaunchedEffect(viewModel.effect) {
         viewModel.effect.collect { effect ->
             when (effect) {
@@ -62,7 +58,6 @@ fun SearchScreen(
         }
     }
 
-    // Auto-focus the search bar when the screen is first entered
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
@@ -89,30 +84,27 @@ fun SearchScreen(
                 .fillMaxSize()
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
-                // Integrated SearchBar with state hoisting
                 SearchBar(
                     query = state.searchQuery,
                     onQueryChange = { viewModel.onEvent(SearchEvent.OnQueryChanged(it)) },
-                    onSearch = { 
-                        // The ViewModel handles search reactively via debounce in the Flow,
-                        // but we could explicitly trigger logic here if needed.
-                    },
+                    onSearch = { },
                     onClear = { viewModel.onEvent(SearchEvent.OnQueryChanged("")) },
                     focusRequester = focusRequester
                 )
                 
                 Spacer(modifier = Modifier.height(MaterialThemeSpacing.medium))
                 
-                // Reusable Paginated List component from Home
                 NewsPagingList(
                     articles = searchResults,
+                    lazyListState = lazyListState,
                     onArticleClick = { article -> 
                         viewModel.onEvent(SearchEvent.OnArticleClicked(article.url)) 
                     },
                     onBookmarkClick = { article ->
                         viewModel.onEvent(SearchEvent.OnBookmarkToggled(article))
                     },
-                    onRetry = { searchResults.retry() }
+                    onRetry = { searchResults.retry() },
+                    isOnline = isOnline
                 )
             }
         }

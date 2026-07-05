@@ -67,6 +67,9 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.browser)
+    implementation(libs.androidx.startup)
+    implementation(libs.androidx.splashscreen)
+    implementation(libs.androidx.profileinstaller)
 
     // Compose
     implementation(platform(libs.androidx.compose.bom))
@@ -123,6 +126,7 @@ dependencies {
 
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+    debugImplementation(libs.leakcanary.android)
 }
 
 // Room configuration for schema location
