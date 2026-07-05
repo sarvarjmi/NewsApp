@@ -1,7 +1,5 @@
 # NewsApp
 
-# 19_Search_Screen.md
-
 > **Phase:** Presentation Layer
 >
 > **Module:** Search Screen
