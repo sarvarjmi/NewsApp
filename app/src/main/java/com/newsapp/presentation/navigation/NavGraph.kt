@@ -9,7 +9,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
-import com.newsapp.presentation.bookmarks.BookmarksScreen
+import com.newsapp.presentation.bookmarks.BookmarkScreen
+import com.newsapp.presentation.bookmarks.BookmarkViewModel
 import com.newsapp.presentation.detail.DetailScreen
 import com.newsapp.presentation.home.HomeScreen
 import com.newsapp.presentation.home.HomeViewModel
@@ -22,9 +23,6 @@ import java.nio.charset.StandardCharsets
 
 /**
  * The main Navigation Graph for the NewsApp.
- * 
- * This graph coordinates all screen transitions, argument passing, and deep link handling.
- * It uses a single [NavHost] with nested navigation for the primary features.
  */
 @Composable
 fun NavGraph(
@@ -38,11 +36,9 @@ fun NavGraph(
     ) {
         /**
          * Nested Navigation Graph for Bottom Navigation destinations.
-         * Grouping these allows for better shared logic and state management.
          */
         navigation<Routes.MainGraph>(startDestination = Routes.Home) {
             
-            // Home Destination
             composable<Routes.Home>(
                 deepLinks = listOf(
                     navDeepLink<Routes.Home>(basePath = "newsapp://home")
@@ -61,7 +57,6 @@ fun NavGraph(
                 )
             }
 
-            // Search Destination
             composable<Routes.Search>(
                 deepLinks = listOf(
                     navDeepLink<Routes.Search>(basePath = "newsapp://search")
@@ -77,13 +72,14 @@ fun NavGraph(
                 )
             }
 
-            // Bookmarks Destination
             composable<Routes.Bookmarks>(
                 deepLinks = listOf(
                     navDeepLink<Routes.Bookmarks>(basePath = "newsapp://bookmarks")
                 )
             ) {
-                BookmarksScreen(
+                val viewModel: BookmarkViewModel = hiltViewModel()
+                BookmarkScreen(
+                    viewModel = viewModel,
                     onNavigateToDetail = { url ->
                         val encodedUrl = URLEncoder.encode(url, StandardCharsets.UTF_8.toString())
                         navController.navigate(Routes.Detail(encodedUrl))
@@ -92,10 +88,6 @@ fun NavGraph(
             }
         }
 
-        /**
-         * Article Detail Screen.
-         * Accepts an encoded article URL to load the specific news content.
-         */
         composable<Routes.Detail>(
             deepLinks = listOf(
                 navDeepLink<Routes.Detail>(basePath = "newsapp://article")
@@ -109,9 +101,6 @@ fun NavGraph(
             )
         }
 
-        /**
-         * WebView Screen for original source viewing.
-         */
         composable<Routes.WebView>(
             deepLinks = listOf(
                 navDeepLink<Routes.WebView>(basePath = "newsapp://webview")

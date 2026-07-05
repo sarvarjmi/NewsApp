@@ -1,7 +1,5 @@
 # NewsApp
 
-# 21_Bookmark_Screen.md
-
 > **Phase:** Presentation Layer
 >
 > **Module:** Bookmark Screen
