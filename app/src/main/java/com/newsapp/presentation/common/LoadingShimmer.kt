@@ -15,17 +15,25 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.newsapp.ui.theme.MaterialThemeSpacing
-import androidx.compose.material3.MaterialTheme
+import com.newsapp.ui.theme.NewsAppTheme
 
+/**
+ * A reusable shimmer loading effect for news cards.
+ *
+ * Uses an infinite transition to animate a linear gradient across placeholders.
+ *
+ * @param modifier Modifier for the shimmer container.
+ */
 @Composable
 fun LoadingShimmer(
     modifier: Modifier = Modifier
@@ -36,28 +44,28 @@ fun LoadingShimmer(
         MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
     )
 
-    val transition = rememberInfiniteTransition(label = "shimmer")
-    val translateAnim = transition.animateFloat(
+    val transition = rememberInfiniteTransition(label = "shimmerTransition")
+    val translateAnim by transition.animateFloat(
         initialValue = 0f,
         targetValue = 1000f,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 1000),
+            animation = tween(durationMillis = 1200),
             repeatMode = RepeatMode.Restart
         ),
-        label = "shimmer"
+        label = "shimmerTranslation"
     )
 
     val brush = Brush.linearGradient(
         colors = shimmerColors,
         start = Offset.Zero,
-        end = Offset(x = translateAnim.value, y = translateAnim.value)
+        end = Offset(x = translateAnim, y = translateAnim)
     )
 
     ShimmerItem(brush = brush, modifier = modifier)
 }
 
 @Composable
-fun ShimmerItem(brush: Brush, modifier: Modifier = Modifier) {
+private fun ShimmerItem(brush: Brush, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -95,5 +103,13 @@ fun ShimmerItem(brush: Brush, modifier: Modifier = Modifier) {
                     .background(brush)
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun LoadingShimmerPreview() {
+    NewsAppTheme {
+        LoadingShimmer()
     }
 }

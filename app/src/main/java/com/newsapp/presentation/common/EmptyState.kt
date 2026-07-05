@@ -17,9 +17,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.newsapp.ui.theme.MaterialThemeSpacing
+import com.newsapp.ui.theme.NewsAppTheme
 
+/**
+ * A reusable empty state view for lists with no data.
+ *
+ * @param message The subtext message providing context.
+ * @param modifier Modifier for the container.
+ * @param icon The icon to display at the top.
+ * @param title The primary heading text.
+ */
 @Composable
 fun EmptyState(
     message: String,
@@ -36,22 +46,38 @@ fun EmptyState(
     ) {
         Icon(
             imageVector = icon,
-            contentDescription = "Empty",
+            contentDescription = null,
             modifier = Modifier.size(MaterialThemeSpacing.extraExtraLarge),
             tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
         )
+        
         Spacer(modifier = Modifier.height(MaterialThemeSpacing.medium))
+        
         Text(
             text = title,
             style = MaterialTheme.typography.titleLarge,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onBackground
         )
+        
         Spacer(modifier = Modifier.height(MaterialThemeSpacing.small))
+        
         Text(
             text = message,
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun EmptyStatePreview() {
+    NewsAppTheme {
+        EmptyState(
+            message = "Your search returned no results. Try using different keywords.",
+            title = "No results found"
         )
     }
 }

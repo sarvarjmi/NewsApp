@@ -39,9 +39,10 @@ fun SearchScreen(
                 modifier = Modifier.padding(MaterialThemeSpacing.medium)
             )
             SearchBar(
-                text = state.searchQuery,
-                onValueChange = { viewModel.onEvent(SearchEvent.OnQueryChanged(it)) },
-                onSearch = { /* Handled reactively */ }
+                query = state.searchQuery,
+                onQueryChange = { viewModel.onEvent(SearchEvent.OnQueryChanged(it)) },
+                onSearch = { /* Handled reactively by flatMapLatest */ },
+                onClear = { viewModel.onEvent(SearchEvent.OnQueryChanged("")) }
             )
             Spacer(modifier = Modifier.height(MaterialThemeSpacing.medium))
             

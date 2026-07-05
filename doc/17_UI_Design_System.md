@@ -1,7 +1,5 @@
 # NewsApp
 
-# 17_UI_Design_System.md
-
 > **Phase:** Presentation Layer
 >
 > **Module:** Design System
