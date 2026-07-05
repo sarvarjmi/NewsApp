@@ -13,7 +13,7 @@ androidxStartup = "1.2.0"
 androidxSplashScreen = "1.2.0"
 androidxProfileInstaller = "1.4.1"
 androidxBenchmarkMacroJunit4 = "1.4.1"
-androidxBaselineProfile = "1.4.1"
+androidxBaselineProfile = "1.5.0-alpha07"
 uiautomator = "2.4.0"
 
 # Compose

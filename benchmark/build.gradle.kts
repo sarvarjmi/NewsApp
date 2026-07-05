@@ -1,15 +1,17 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
-    id("com.android.test")
-    id("androidx.baselineprofile")
+    alias(libs.plugins.agpTest)
+    alias(libs.plugins.baselineProfile)
 }
 
 android {
     namespace = "com.newsapp.benchmark"
-    compileSdk = 35
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 37
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -17,10 +19,9 @@ android {
     targetProjectPath = ":app"
 
     buildTypes {
-        create("benchmark") {
-            debuggable = true
-            signingConfig = debug.signingConfig
-            matchingFallbacks += listOf("release")
+        register("benchmark") {
+            isMinifyEnabled = false
+            matchingFallbacks += "release"
         }
     }
 
@@ -28,9 +29,11 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+}
 
-    kotlinOptions {
-        jvmTarget = "17"
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_17)
     }
 }
 

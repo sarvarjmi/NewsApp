@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.room)
+    alias(libs.plugins.baselineProfile)
 }
 
 android {
@@ -132,4 +133,9 @@ dependencies {
 // Room configuration for schema location
 room {
     schemaDirectory("$projectDir/schemas")
+}
+
+baselineProfile {
+    // Our benchmark module is where the profile generator tests are located.
+    from(project(":benchmark"))
 }
