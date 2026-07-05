@@ -67,7 +67,12 @@ fun NewsPagingList(
         // Main paginated items with Performance Optimizations
         items(
             count = articles.itemCount, 
-            key = articles.itemKey { it.url },
+            key = { index -> 
+                val article = articles.peek(index)
+                // Combine URL and index to guarantee uniqueness even if the API returns duplicate articles.
+                // We use peek() to avoid triggering page loads during key calculation.
+                if (article != null) "${article.url}_$index" else index
+            },
             contentType = articles.itemContentType { "ArticleCard" }
         ) { index ->
             articles[index]?.let { article ->

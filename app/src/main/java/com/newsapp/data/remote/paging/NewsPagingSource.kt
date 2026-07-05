@@ -45,7 +45,11 @@ class NewsPagingSource(
         
         return when (result) {
             is NetworkResult.Success -> {
-                val articles = result.data.articles.map { it.toDomain() }
+                // Filter out any potential duplicates within the same page from the API
+                val articles = result.data.articles
+                    .map { it.toDomain() }
+                    .distinctBy { it.url }
+
                 LoadResult.Page(
                     data = articles,
                     prevKey = if (page == 1) null else page - 1,

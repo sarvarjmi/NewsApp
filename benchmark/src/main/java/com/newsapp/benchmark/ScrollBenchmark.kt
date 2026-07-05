@@ -35,7 +35,10 @@ class ScrollBenchmark {
         
         device.waitForIdle()
         val list = device.findObject(By.res("news_list"))
-        list.setGestureMargin(device.displayWidth / 5)
-        list.fling(Direction.DOWN)
+        if (list != null) {
+            list.setGestureMargin(device.displayWidth / 5)
+            list.fling(Direction.DOWN)
+            device.waitForIdle()
+        }
     }
 }
