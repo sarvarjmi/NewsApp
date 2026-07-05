@@ -29,7 +29,7 @@ class DetailViewModel @Inject constructor(
         when (event) {
             is DetailEvent.OnBookmarkToggled -> toggleBookmark(event.article)
             is DetailEvent.OnShareClicked -> sendEffect(DetailSideEffect.ShareArticle(event.article.url, event.article.title))
-            is DetailEvent.OnOpenInBrowserClicked -> sendEffect(DetailSideEffect.OpenBrowser(event.url))
+            is DetailEvent.OnOpenInBrowserClicked -> sendEffect(DetailSideEffect.NavigateToWebView(event.url))
             DetailEvent.OnBackClicked -> sendEffect(DetailSideEffect.NavigateBack)
             DetailEvent.OnRetryClicked -> loadArticleMetadata()
         }

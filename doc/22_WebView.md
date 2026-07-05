@@ -1,7 +1,5 @@
 # NewsApp
 
-# 22_WebView.md
-
 > **Phase:** Presentation Layer
 >
 > **Module:** Article Reader (WebView & Chrome Custom Tabs)

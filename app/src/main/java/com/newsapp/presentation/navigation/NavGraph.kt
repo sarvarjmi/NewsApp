@@ -97,7 +97,10 @@ fun NavGraph(
             val decodedUrl = URLDecoder.decode(detail.articleUrl, StandardCharsets.UTF_8.toString())
             DetailScreen(
                 articleUrl = decodedUrl,
-                onBackClick = { navController.navigateUp() }
+                onBackClick = { navController.navigateUp() },
+                onNavigateToWebView = { url ->
+                    navController.navigate(Routes.WebView(url))
+                }
             )
         }
 

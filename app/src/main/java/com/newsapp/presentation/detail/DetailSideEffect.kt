@@ -5,6 +5,11 @@ package com.newsapp.presentation.detail
  */
 sealed interface DetailSideEffect {
     /**
+     * Navigate to the internal WebView screen.
+     */
+    data class NavigateToWebView(val url: String) : DetailSideEffect
+
+    /**
      * Trigger the system share sheet.
      */
     data class ShareArticle(val url: String, val title: String) : DetailSideEffect

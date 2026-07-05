@@ -45,8 +45,11 @@ import com.newsapp.domain.model.Source
 import com.newsapp.presentation.common.BookmarkButton
 import com.newsapp.presentation.common.ErrorView
 import com.newsapp.presentation.common.PrimaryButton
+import com.newsapp.presentation.navigation.Routes
 import com.newsapp.ui.theme.MaterialThemeSpacing
 import com.newsapp.ui.theme.NewsAppTheme
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 /**
  * The Article Detail Screen.
@@ -64,6 +67,7 @@ import com.newsapp.ui.theme.NewsAppTheme
 fun DetailScreen(
     articleUrl: String,
     onBackClick: () -> Unit,
+    onNavigateToWebView: (String) -> Unit,
     viewModel: DetailViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -74,6 +78,10 @@ fun DetailScreen(
         viewModel.effect.collect { effect ->
             when (effect) {
                 DetailSideEffect.NavigateBack -> onBackClick()
+                is DetailSideEffect.NavigateToWebView -> {
+                    val encodedUrl = URLEncoder.encode(effect.url, StandardCharsets.UTF_8.toString())
+                    onNavigateToWebView(encodedUrl)
+                }
                 is DetailSideEffect.OpenBrowser -> {
                     try {
                         val customTabsIntent = CustomTabsIntent.Builder().build()
