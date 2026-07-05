@@ -1,7 +1,5 @@
 # NewsApp
 
-# 16_Navigation.md
-
 > **Phase:** Presentation Layer
 >
 > **Module:** Navigation Architecture
