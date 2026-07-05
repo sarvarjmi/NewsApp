@@ -6,7 +6,6 @@ import com.newsapp.domain.usecase.bookmark.IsBookmarkedUseCase
 import com.newsapp.domain.usecase.bookmark.ToggleBookmarkUseCase
 import com.newsapp.presentation.common.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 /**
@@ -31,7 +30,7 @@ class DetailViewModel @Inject constructor(
             is DetailEvent.OnShareClicked -> sendEffect(DetailSideEffect.ShareArticle(event.article.url, event.article.title))
             is DetailEvent.OnOpenInBrowserClicked -> sendEffect(DetailSideEffect.NavigateToWebView(event.url))
             DetailEvent.OnBackClicked -> sendEffect(DetailSideEffect.NavigateBack)
-            DetailEvent.OnRetryClicked -> loadArticleMetadata()
+            DetailEvent.OnRetryClicked -> currentState.article?.let { init(it) }
         }
     }
 
@@ -42,17 +41,18 @@ class DetailViewModel @Inject constructor(
      */
     fun init(article: Article?) {
         if (article == null) {
-            updateState { it.copy(isLoading = false, error = "Article not found") }
+            updateState { it.copy(isLoading = false, error = "Article details unavailable") }
             return
         }
 
-        val readingTime = calculateReadingTime(article.content ?: "")
+        val readingTime = calculateReadingTime(article.content ?: article.description ?: "")
         
         updateState { 
             it.copy(
                 article = article, 
                 isLoading = false,
-                readingTime = readingTime
+                readingTime = readingTime,
+                error = null
             ) 
         }
         
@@ -62,7 +62,6 @@ class DetailViewModel @Inject constructor(
     private fun toggleBookmark(article: Article) {
         safeLaunch {
             toggleBookmarkUseCase(article)
-            // Reactively update the local state flag
             val isNowBookmarked = isBookmarkedUseCase(article.url)
             updateState { it.copy(isBookmarked = isNowBookmarked) }
         }
@@ -75,15 +74,12 @@ class DetailViewModel @Inject constructor(
         }
     }
 
-    private fun loadArticleMetadata() {
-        // Implementation for deep-link data recovery (Future phase)
-    }
-
     /**
      * Business Logic: Simple reading time calculation based on average reading speed (200 wpm).
      */
     private fun calculateReadingTime(content: String): String {
-        val words = content.split(" ").size
+        if (content.isBlank()) return "1 min read"
+        val words = content.split("\\s+".toRegex()).size
         val minutes = (words / 200).coerceAtLeast(1)
         return "$minutes min read"
     }

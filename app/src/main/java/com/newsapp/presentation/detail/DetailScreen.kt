@@ -46,7 +46,6 @@ import com.newsapp.domain.model.Source
 import com.newsapp.presentation.common.BookmarkButton
 import com.newsapp.presentation.common.ErrorView
 import com.newsapp.presentation.common.PrimaryButton
-import com.newsapp.presentation.navigation.Routes
 import com.newsapp.ui.theme.MaterialThemeSpacing
 import com.newsapp.ui.theme.NewsAppTheme
 import java.net.URLEncoder
@@ -56,23 +55,27 @@ import java.nio.charset.StandardCharsets
  * The Article Detail Screen.
  *
  * This screen provides an immersive reading experience for a news article.
- * It features a large hero image, full content view, and quick actions for 
- * sharing and bookmarking.
- *
- * @param articleUrl The unique identifier (URL) of the article.
- * @param onBackClick Callback for navigating back to the previous screen.
- * @param viewModel The Hilt-injected [DetailViewModel].
+ * 
+ * @param article The news article to be displayed.
+ * @param onBackClick Callback for navigating back.
+ * @param onNavigateToWebView Callback to open the full article in an internal web view.
+ * @param viewModel The [DetailViewModel].
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(
-    articleUrl: String,
+    article: Article,
     onBackClick: () -> Unit,
     onNavigateToWebView: (String) -> Unit,
     viewModel: DetailViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+
+    // Initialize the ViewModel with the passed article
+    LaunchedEffect(article) {
+        viewModel.init(article)
+    }
 
     // Handle One-time Side Effects (Navigation, External Apps)
     LaunchedEffect(viewModel.effect) {
@@ -88,7 +91,6 @@ fun DetailScreen(
                         val customTabsIntent = CustomTabsIntent.Builder().build()
                         customTabsIntent.launchUrl(context, Uri.parse(effect.url))
                     } catch (e: Exception) {
-                        // Fallback to system browser
                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(effect.url))
                         context.startActivity(intent)
                     }
@@ -123,8 +125,8 @@ fun DetailScreen(
                     }
                 },
                 actions = {
-                    state.article?.let { article ->
-                        IconButton(onClick = { viewModel.onEvent(DetailEvent.OnShareClicked(article)) }) {
+                    state.article?.let { currentArticle ->
+                        IconButton(onClick = { viewModel.onEvent(DetailEvent.OnShareClicked(currentArticle)) }) {
                             Icon(
                                 imageVector = Icons.Default.Share, 
                                 contentDescription = "Share Article"
@@ -132,7 +134,7 @@ fun DetailScreen(
                         }
                         BookmarkButton(
                             isBookmarked = state.isBookmarked,
-                            onClick = { viewModel.onEvent(DetailEvent.OnBookmarkToggled(article)) }
+                            onClick = { viewModel.onEvent(DetailEvent.OnBookmarkToggled(currentArticle)) }
                         )
                     }
                 },
@@ -269,7 +271,7 @@ private fun DetailScreenContentPreview() {
         title = "NASA’s James Webb Telescope Reveals New Insights into the Early Universe",
         author = "Jane Doe",
         description = "A detailed look at the latest findings from the world’s most powerful space telescope.",
-        content = "The James Webb Space Telescope has once again captured the imagination of astronomers worldwide... [Truncated content to simulate real API data]",
+        content = "The James Webb Space Telescope has once again captured the imagination of astronomers worldwide...",
         url = "https://example.com",
         urlToImage = "https://via.placeholder.com/600x400",
         publishedAt = "2 hours ago",

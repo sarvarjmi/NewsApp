@@ -13,6 +13,7 @@ import timber.log.Timber
  */
 class NewsPagingSource(
     private val remoteDataSource: RemoteNewsDataSource,
+    private val isBookmarked: suspend (String) -> Boolean,
     private val category: String? = null,
     private val query: String? = null
 ) : PagingSource<Int, Article>() {
@@ -47,7 +48,9 @@ class NewsPagingSource(
             is NetworkResult.Success -> {
                 // Filter out any potential duplicates within the same page from the API
                 val articles = result.data.articles
-                    .map { it.toDomain() }
+                    .map { 
+                        it.toDomain().copy(isBookmarked = isBookmarked(it.url))
+                    }
                     .distinctBy { it.url }
 
                 LoadResult.Page(

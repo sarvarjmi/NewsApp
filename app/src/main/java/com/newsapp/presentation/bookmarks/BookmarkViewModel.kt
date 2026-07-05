@@ -103,7 +103,7 @@ class BookmarkViewModel @Inject constructor(
      * Emits a navigation effect to open the article detail screen.
      */
     private fun navigateToDetail(article: Article) {
-        sendEffect(BookmarkSideEffect.NavigateToDetail(article.url))
+        sendEffect(BookmarkSideEffect.NavigateToDetail(article))
     }
 
     /**

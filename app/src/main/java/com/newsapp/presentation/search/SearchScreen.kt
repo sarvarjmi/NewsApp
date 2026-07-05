@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.newsapp.domain.model.Article
 import com.newsapp.presentation.common.NewsPagingList
 import com.newsapp.presentation.common.SearchBar
 import com.newsapp.ui.theme.MaterialThemeSpacing
@@ -39,7 +40,7 @@ import com.newsapp.ui.theme.MaterialThemeSpacing
 fun SearchScreen(
     viewModel: SearchViewModel,
     isOnline: Boolean,
-    onNavigateToDetail: (String) -> Unit
+    onNavigateToDetail: (Article) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val searchResults = viewModel.searchResults.collectAsLazyPagingItems()
@@ -53,7 +54,7 @@ fun SearchScreen(
     LaunchedEffect(viewModel.effect) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is SearchSideEffect.NavigateToDetail -> onNavigateToDetail(effect.url)
+                is SearchSideEffect.NavigateToDetail -> onNavigateToDetail(effect.article)
             }
         }
     }
@@ -98,7 +99,7 @@ fun SearchScreen(
                     articles = searchResults,
                     lazyListState = lazyListState,
                     onArticleClick = { article -> 
-                        viewModel.onEvent(SearchEvent.OnArticleClicked(article.url)) 
+                        viewModel.onEvent(SearchEvent.OnArticleClicked(article))
                     },
                     onBookmarkClick = { article ->
                         viewModel.onEvent(SearchEvent.OnBookmarkToggled(article))

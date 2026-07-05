@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.newsapp.domain.model.Article
 import com.newsapp.presentation.common.CategoryChip
 import com.newsapp.presentation.common.NewsPagingList
 import com.newsapp.ui.theme.MaterialThemeSpacing
@@ -48,7 +49,7 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     viewModel: HomeViewModel,
     isOnline: Boolean,
-    onNavigateToDetail: (String) -> Unit,
+    onNavigateToDetail: (Article) -> Unit,
     onNavigateToSearch: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -66,7 +67,7 @@ fun HomeScreen(
     LaunchedEffect(viewModel.effect) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is HomeSideEffect.NavigateToDetail -> onNavigateToDetail(effect.url)
+                is HomeSideEffect.NavigateToDetail -> onNavigateToDetail(effect.article)
                 HomeSideEffect.NavigateToSearch -> onNavigateToSearch()
             }
         }

@@ -1,6 +1,12 @@
 package com.newsapp.presentation.navigation
 
+import android.net.Uri
+import android.os.Bundle
+import androidx.navigation.NavType
+import com.newsapp.domain.model.Article
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 /**
  * Centralized route definitions for NewsApp using Jetpack Compose Navigation type-safety.
@@ -41,10 +47,10 @@ sealed interface Routes {
      * The Article Detail screen.
      * Renders the full details of a specific news article.
      *
-     * @param articleUrl The unique canonical URL of the article, used to fetch or identify the content.
+     * @param article The article domain model to be displayed.
      */
     @Serializable
-    data class Detail(val articleUrl: String) : Routes
+    data class Detail(val article: Article) : Routes
 
     /**
      * The WebView screen.
@@ -55,4 +61,28 @@ sealed interface Routes {
      */
     @Serializable
     data class WebView(val url: String) : Routes
+}
+
+/**
+ * Custom [NavType] for [Article] to allow passing it as a navigation argument.
+ * 
+ * Uses [Json] for serialization/deserialization and [Uri.encode]/[Uri.decode] 
+ * to safely embed the JSON string within the navigation route URL.
+ */
+val ArticleNavType = object : NavType<Article>(isNullableAllowed = false) {
+    override fun get(bundle: Bundle, key: String): Article? {
+        return bundle.getString(key)?.let { Json.decodeFromString(it) }
+    }
+
+    override fun parseValue(value: String): Article {
+        return Json.decodeFromString(Uri.decode(value))
+    }
+
+    override fun serializeAsValue(value: Article): String {
+        return Uri.encode(Json.encodeToString(value))
+    }
+
+    override fun put(bundle: Bundle, key: String, value: Article) {
+        bundle.putString(key, Json.encodeToString(value))
+    }
 }

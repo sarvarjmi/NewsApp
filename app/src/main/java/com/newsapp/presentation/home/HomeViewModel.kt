@@ -11,6 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
 /**
@@ -38,6 +39,9 @@ class HomeViewModel @Inject constructor(
         .flatMapLatest { currentState ->
             getTopHeadlinesUseCase(currentState.selectedCategory.lowercase())
         }
+        .onStart {
+            // No-op to ensure the flow is ready
+        }
         .cachedIn(viewModelScope)
 
     /**
@@ -62,7 +66,7 @@ class HomeViewModel @Inject constructor(
             
             is HomeEvent.OnArticleClicked -> {
                 // Navigation is handled via side effects to ensure one-time delivery
-                sendEffect(HomeSideEffect.NavigateToDetail(event.article.url))
+                sendEffect(HomeSideEffect.NavigateToDetail(event.article))
             }
             
             HomeEvent.OnSearchClicked -> {

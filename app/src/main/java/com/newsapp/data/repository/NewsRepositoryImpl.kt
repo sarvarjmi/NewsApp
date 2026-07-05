@@ -13,6 +13,8 @@ import com.newsapp.domain.model.Article
 import com.newsapp.domain.repository.NewsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.util.Collections
+import java.util.WeakHashMap
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -42,14 +44,25 @@ class NewsRepositoryImpl @Inject constructor(
         initialLoadSize = ApiConstants.DEFAULT_PAGE_SIZE
     )
 
+    private val activePagingSources = Collections.synchronizedSet(
+        Collections.newSetFromMap(WeakHashMap<NewsPagingSource, Boolean>())
+    )
+
+    private fun invalidateActiveSources() {
+        synchronized(activePagingSources) {
+            activePagingSources.forEach { it.invalidate() }
+        }
+    }
+
     override fun getTopHeadlines(category: String?): Flow<PagingData<Article>> {
         return Pager(
             config = pagingConfig,
             pagingSourceFactory = {
                 NewsPagingSource(
                     remoteDataSource = remoteDataSource,
+                    isBookmarked = { localDataSource.isBookmarked(it) },
                     category = category
-                )
+                ).also { activePagingSources.add(it) }
             }
         ).flow
     }
@@ -60,8 +73,9 @@ class NewsRepositoryImpl @Inject constructor(
             pagingSourceFactory = {
                 NewsPagingSource(
                     remoteDataSource = remoteDataSource,
+                    isBookmarked = { localDataSource.isBookmarked(it) },
                     query = query
-                )
+                ).also { activePagingSources.add(it) }
             }
         ).flow
     }
@@ -72,10 +86,12 @@ class NewsRepositoryImpl @Inject constructor(
 
     override suspend fun saveBookmark(article: Article) {
         localDataSource.upsertBookmark(article.toEntity())
+        invalidateActiveSources()
     }
 
     override suspend fun removeBookmark(article: Article) {
         localDataSource.deleteBookmark(article.toEntity())
+        invalidateActiveSources()
     }
 
     override suspend fun toggleBookmark(article: Article) {
@@ -85,6 +101,7 @@ class NewsRepositoryImpl @Inject constructor(
         } else {
             localDataSource.upsertBookmark(article.toEntity())
         }
+        invalidateActiveSources()
     }
 
     override fun observeBookmarks(): Flow<List<Article>> {

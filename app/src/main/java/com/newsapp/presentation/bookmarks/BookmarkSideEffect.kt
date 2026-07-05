@@ -9,7 +9,7 @@ sealed interface BookmarkSideEffect {
     /**
      * Navigate to the details of a specific article.
      */
-    data class NavigateToDetail(val url: String) : BookmarkSideEffect
+    data class NavigateToDetail(val article: Article) : BookmarkSideEffect
 
     /**
      * Show a Snackbar with an undo option after removing a bookmark.

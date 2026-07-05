@@ -9,6 +9,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
+import com.newsapp.domain.model.Article
+import kotlin.reflect.typeOf
 import com.newsapp.presentation.bookmarks.BookmarkScreen
 import com.newsapp.presentation.bookmarks.BookmarkViewModel
 import com.newsapp.presentation.detail.DetailScreen
@@ -18,7 +20,6 @@ import com.newsapp.presentation.search.SearchScreen
 import com.newsapp.presentation.search.SearchViewModel
 import com.newsapp.presentation.webview.WebViewScreen
 import java.net.URLDecoder
-import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 /**
@@ -49,9 +50,8 @@ fun NavGraph(
                 HomeScreen(
                     viewModel = viewModel,
                     isOnline = isOnline,
-                    onNavigateToDetail = { url ->
-                        val encodedUrl = URLEncoder.encode(url, StandardCharsets.UTF_8.toString())
-                        navController.navigate(Routes.Detail(encodedUrl))
+                    onNavigateToDetail = { article ->
+                        navController.navigate(Routes.Detail(article))
                     },
                     onNavigateToSearch = {
                         navController.navigate(Routes.Search)
@@ -68,9 +68,8 @@ fun NavGraph(
                 SearchScreen(
                     viewModel = viewModel,
                     isOnline = isOnline,
-                    onNavigateToDetail = { url ->
-                        val encodedUrl = URLEncoder.encode(url, StandardCharsets.UTF_8.toString())
-                        navController.navigate(Routes.Detail(encodedUrl))
+                    onNavigateToDetail = { article ->
+                        navController.navigate(Routes.Detail(article))
                     }
                 )
             }
@@ -83,23 +82,25 @@ fun NavGraph(
                 val viewModel: BookmarkViewModel = hiltViewModel()
                 BookmarkScreen(
                     viewModel = viewModel,
-                    onNavigateToDetail = { url ->
-                        val encodedUrl = URLEncoder.encode(url, StandardCharsets.UTF_8.toString())
-                        navController.navigate(Routes.Detail(encodedUrl))
+                    onNavigateToDetail = { article ->
+                        navController.navigate(Routes.Detail(article))
                     }
                 )
             }
         }
 
         composable<Routes.Detail>(
+            typeMap = mapOf(typeOf<Article>() to ArticleNavType),
             deepLinks = listOf(
-                navDeepLink<Routes.Detail>(basePath = "newsapp://article")
+                navDeepLink<Routes.Detail>(
+                    basePath = "newsapp://article",
+                    typeMap = mapOf(typeOf<Article>() to ArticleNavType)
+                )
             )
         ) { backStackEntry ->
             val detail = backStackEntry.toRoute<Routes.Detail>()
-            val decodedUrl = URLDecoder.decode(detail.articleUrl, StandardCharsets.UTF_8.toString())
             DetailScreen(
-                articleUrl = decodedUrl,
+                article = detail.article,
                 onBackClick = { navController.navigateUp() },
                 onNavigateToWebView = { url ->
                     navController.navigate(Routes.WebView(url))

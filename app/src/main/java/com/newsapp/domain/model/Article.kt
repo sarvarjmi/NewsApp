@@ -1,11 +1,14 @@
 package com.newsapp.domain.model
 
+import kotlinx.serialization.Serializable
+
 /**
  * Domain model representing a news article.
  * 
  * This model is pure Kotlin and independent of any data-layer specific 
  * implementations like DTOs or Entities.
  */
+@Serializable
 data class Article(
     val title: String,
     val author: String?,

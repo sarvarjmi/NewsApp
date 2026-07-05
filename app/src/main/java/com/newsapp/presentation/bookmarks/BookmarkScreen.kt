@@ -53,7 +53,7 @@ import com.newsapp.ui.theme.NewsAppTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookmarkScreen(
-    onNavigateToDetail: (String) -> Unit,
+    onNavigateToDetail: (Article) -> Unit,
     viewModel: BookmarkViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -65,7 +65,7 @@ fun BookmarkScreen(
     LaunchedEffect(viewModel.effect) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is BookmarkSideEffect.NavigateToDetail -> onNavigateToDetail(effect.url)
+                is BookmarkSideEffect.NavigateToDetail -> onNavigateToDetail(effect.article)
                 is BookmarkSideEffect.ShowUndoSnackbar -> {
                     val result = snackbarHostState.showSnackbar(
                         message = "Removed from bookmarks",
