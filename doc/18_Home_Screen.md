@@ -1,7 +1,5 @@
 # NewsApp
 
-# 18_Home_Screen.md
-
 > **Phase:** Presentation Layer
 >
 > **Module:** Home Screen

@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -16,17 +16,22 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -37,9 +42,14 @@ import com.newsapp.presentation.common.EmptyState
 import com.newsapp.presentation.common.ErrorView
 import com.newsapp.presentation.common.LoadingShimmer
 import com.newsapp.presentation.common.NewsCard
-import com.newsapp.presentation.common.PrimaryButton
 import com.newsapp.ui.theme.MaterialThemeSpacing
 
+/**
+ * The main Home Screen integration.
+ *
+ * This Composable connects the UI to the [HomeViewModel], handles reactive state 
+ * updates, collects paging data, and responds to one-time navigation side effects.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
@@ -47,54 +57,103 @@ fun HomeScreen(
     onNavigateToDetail: (String) -> Unit,
     onNavigateToSearch: () -> Unit
 ) {
-    val state by viewModel.state.collectAsState()
+    // 1. Observe StateFlow: Collect UI metadata
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    
+    // 2. Collect Paging Data: Reactive stream of news articles
     val articles = viewModel.articles.collectAsLazyPagingItems()
 
+    // 3. Handle Navigation Side Effects
+    LaunchedEffect(viewModel.effect) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                is HomeSideEffect.NavigateToDetail -> onNavigateToDetail(effect.url)
+                HomeSideEffect.NavigateToSearch -> onNavigateToSearch()
+            }
+        }
+    }
+
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val pullToRefreshState = rememberPullToRefreshState()
+    
+    // Refresh state derived from Paging
+    val isRefreshing = articles.loadState.refresh is LoadState.Loading && articles.itemCount > 0
+
     Scaffold(
+        modifier = Modifier
+            .fillMaxSize()
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            TopAppBar(
-                title = {
+            LargeTopAppBar(
+                title = { 
                     Text(
-                        text = "NewsApp",
-                        style = MaterialTheme.typography.headlineMedium,
+                        text = "NewsApp", 
+                        style = MaterialTheme.typography.headlineMedium, 
                         fontWeight = FontWeight.Bold
-                    )
+                    ) 
                 },
                 actions = {
-                    IconButton(onClick = onNavigateToSearch) {
-                        Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
+                    IconButton(onClick = { viewModel.onEvent(HomeEvent.OnSearchClicked) }) {
+                        Icon(imageVector = Icons.Default.Search, contentDescription = "Search News")
                     }
                 },
-                windowInsets = TopAppBarDefaults.windowInsets
+                scrollBehavior = scrollBehavior
             )
         }
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
+        // 4. Pull-to-refresh integration
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = { 
+                viewModel.onEvent(HomeEvent.OnRefresh)
+                articles.refresh() 
+            },
+            state = pullToRefreshState,
+            modifier = Modifier.padding(innerPadding).fillMaxSize()
         ) {
-            // Category Selection Row
-            LazyRow(
-                modifier = Modifier.padding(bottom = MaterialThemeSpacing.small)
-            ) {
-                itemsIndexed(state.categories) { index, category ->
-                    CategoryChip(
-                        modifier = if (index == 0) Modifier.padding(start = MaterialThemeSpacing.medium) else Modifier,
-                        category = category,
-                        isSelected = state.selectedCategory == category,
-                        onSelected = { viewModel.onEvent(HomeEvent.OnCategorySelected(it)) }
-                    )
-                }
-            }
+            Column(modifier = Modifier.fillMaxSize()) {
+                HomeCategoryRow(
+                    categories = state.categories,
+                    selectedCategory = state.selectedCategory,
+                    onCategorySelected = { viewModel.onEvent(HomeEvent.OnCategorySelected(it)) }
+                )
 
-            // Paginated News List
-            NewsPagingList(
-                articles = articles,
-                onArticleClick = onNavigateToDetail,
-                onBookmarkClick = { article ->
-                    viewModel.onEvent(HomeEvent.OnBookmarkToggled(article))
-                }
+                NewsPagingList(
+                    articles = articles,
+                    onArticleClick = { article -> 
+                        viewModel.onEvent(HomeEvent.OnArticleClicked(article)) 
+                    },
+                    onBookmarkClick = { article -> 
+                        viewModel.onEvent(HomeEvent.OnBookmarkToggled(article)) 
+                    },
+                    onRetry = {
+                        viewModel.onEvent(HomeEvent.OnRetry)
+                        articles.retry()
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun HomeCategoryRow(
+    categories: List<String>,
+    selectedCategory: String,
+    onCategorySelected: (String) -> Unit
+) {
+    LazyRow(
+        modifier = Modifier.padding(bottom = MaterialThemeSpacing.small),
+        contentPadding = PaddingValues(horizontal = MaterialThemeSpacing.medium)
+    ) {
+        itemsIndexed(categories) { index, category ->
+            CategoryChip(
+                category = category,
+                isSelected = selectedCategory == category,
+                onSelected = onCategorySelected,
+                modifier = Modifier.padding(
+                    end = if (index < categories.lastIndex) MaterialThemeSpacing.small else 0.dp
+                )
             )
         }
     }
@@ -103,19 +162,20 @@ fun HomeScreen(
 @Composable
 fun NewsPagingList(
     articles: LazyPagingItems<Article>,
-    onArticleClick: (String) -> Unit,
-    onBookmarkClick: (Article) -> Unit
+    onArticleClick: (Article) -> Unit,
+    onBookmarkClick: (Article) -> Unit,
+    onRetry: () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = MaterialThemeSpacing.medium)
+        contentPadding = PaddingValues(bottom = MaterialThemeSpacing.large)
     ) {
         item {
             Text(
-                text = "Breaking News",
-                style = MaterialTheme.typography.titleLarge,
+                text = "Breaking News", 
+                style = MaterialTheme.typography.titleLarge, 
                 modifier = Modifier.padding(
-                    horizontal = MaterialThemeSpacing.medium,
+                    horizontal = MaterialThemeSpacing.medium, 
                     vertical = MaterialThemeSpacing.small
                 ),
                 fontWeight = FontWeight.Bold
@@ -123,8 +183,8 @@ fun NewsPagingList(
         }
 
         items(
-            count = articles.itemCount,
-            key = articles.itemKey { it.url } // Optimization: Stable keys prevent redundant recompositions
+            count = articles.itemCount, 
+            key = articles.itemKey { it.url }
         ) { index ->
             articles[index]?.let { article ->
                 NewsCard(
@@ -134,9 +194,9 @@ fun NewsPagingList(
                     date = article.publishedAt,
                     isBookmarked = article.isBookmarked,
                     onBookmarkClick = { onBookmarkClick(article) },
-                    onClick = { onArticleClick(article.url) },
+                    onClick = { onArticleClick(article) },
                     modifier = Modifier.padding(
-                        horizontal = MaterialThemeSpacing.medium,
+                        horizontal = MaterialThemeSpacing.medium, 
                         vertical = MaterialThemeSpacing.small
                     ),
                     description = article.description
@@ -144,76 +204,32 @@ fun NewsPagingList(
             }
         }
 
-        // Handle different LoadStates
-        articles.apply {
-            when {
-                // Initial Load - Show Shimmer Skeletons
-                loadState.refresh is LoadState.Loading -> {
-                    item {
-                        repeat(5) {
-                            LoadingShimmer()
-                        }
+        // Load State Management
+        item {
+            articles.apply {
+                when {
+                    loadState.refresh is LoadState.Loading && itemCount == 0 -> {
+                        repeat(6) { LoadingShimmer() }
                     }
-                }
 
-                // Initial Load Error - Show Full Screen Error
-                loadState.refresh is LoadState.Error -> {
-                    val error = loadState.refresh as LoadState.Error
-                    item {
+                    loadState.refresh is LoadState.Error -> {
+                        val error = loadState.refresh as LoadState.Error
                         ErrorView(
-                            message = error.error.localizedMessage ?: "Unknown Error",
-                            onRetry = { retry() }
+                            message = error.error.localizedMessage ?: "Network error", 
+                            onRetry = onRetry
                         )
                     }
-                }
 
-                // Empty State
-                loadState.refresh is LoadState.NotLoading && articles.itemCount == 0 -> {
-                    item {
-                        EmptyState(
-                            message = "No articles found for this category.",
-                            title = "No News"
-                        )
+                    loadState.refresh is LoadState.NotLoading && itemCount == 0 -> {
+                        EmptyState(message = "No articles found.", title = "Nothing here")
                     }
-                }
 
-                // Pagination Loading (Append) - Show Spinner at bottom
-                loadState.append is LoadState.Loading -> {
-                    item {
+                    loadState.append is LoadState.Loading -> {
                         Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(MaterialThemeSpacing.medium),
+                            Modifier.fillMaxWidth().padding(16.dp), 
                             contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.wrapContentSize(),
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                    }
-                }
-
-                // Pagination Error (Append) - Show Error with Retry at bottom
-                loadState.append is LoadState.Error -> {
-                    val error = loadState.append as LoadState.Error
-                    item {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(MaterialThemeSpacing.medium),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = error.error.localizedMessage ?: "Failed to load more",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.error
-                            )
-                            PrimaryButton(
-                                text = "Retry",
-                                onClick = { retry() },
-                                modifier = Modifier.padding(top = MaterialThemeSpacing.small)
-                            )
+                        ) { 
+                            CircularProgressIndicator(Modifier.size(24.dp), strokeWidth = 2.dp)
                         }
                     }
                 }

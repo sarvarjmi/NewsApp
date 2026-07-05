@@ -8,6 +8,8 @@ import com.newsapp.domain.model.Article
 sealed interface HomeEvent {
     data class OnCategorySelected(val category: String) : HomeEvent
     data class OnBookmarkToggled(val article: Article) : HomeEvent
+    data class OnArticleClicked(val article: Article) : HomeEvent
+    data object OnSearchClicked : HomeEvent
     data object OnRefresh : HomeEvent
     data object OnRetry : HomeEvent
 }

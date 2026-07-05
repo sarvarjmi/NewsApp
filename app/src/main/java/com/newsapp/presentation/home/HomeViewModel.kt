@@ -16,22 +16,22 @@ import javax.inject.Inject
 /**
  * ViewModel for the Home Screen.
  * 
- * Manages the state of the top headlines feed, category selection, 
- * and bookmark interactions.
+ * Coordinates between the domain layer use cases and the Home UI.
+ * Implements a Unidirectional Data Flow (UDF) by exposing a single [state] 
+ * and handling [HomeEvent]s.
  */
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getTopHeadlinesUseCase: GetTopHeadlinesUseCase,
     private val toggleBookmarkUseCase: ToggleBookmarkUseCase
-) : BaseViewModel<HomeUiState, Unit>(HomeUiState()) {
+) : BaseViewModel<HomeUiState, HomeSideEffect>(HomeUiState()) {
 
     /**
      * A reactive stream of paginated articles.
      * 
-     * We use [flatMapLatest] to automatically restart the paging flow whenever 
-     * the [state.selectedCategory] changes.
-     * [cachedIn(viewModelScope)] ensures that the paging state is preserved 
-     * during configuration changes like screen rotation.
+     * [flatMapLatest]: Restarts the paging stream whenever the category changes.
+     * [cachedIn]: Preserves the paging data in the ViewModel's scope so it 
+     *             survives configuration changes.
      */
     @OptIn(ExperimentalCoroutinesApi::class)
     val articles: Flow<PagingData<Article>> = state
@@ -41,36 +41,41 @@ class HomeViewModel @Inject constructor(
         .cachedIn(viewModelScope)
 
     /**
-     * Entry point for all UI interactions.
-     * 
-     * Decouples the UI from the implementation details of the ViewModel.
+     * Main entry point for user interactions.
+     *
+     * Business logic is kept within this method or delegated to use cases, 
+     * ensuring the Composable remains pure and stateless.
      */
     fun onEvent(event: HomeEvent) {
         when (event) {
-            is HomeEvent.OnCategorySelected -> updateCategory(event.category)
-            is HomeEvent.OnBookmarkToggled -> toggleBookmark(event.article)
-            HomeEvent.OnRefresh -> { /* Paging handles refresh via UI */ }
-            HomeEvent.OnRetry -> { /* Paging handles retry via UI */ }
-        }
-    }
-
-    /**
-     * Updates the UI state with a new category.
-     * This triggers the [articles] flow to emit a new PagingData stream.
-     */
-    private fun updateCategory(category: String) {
-        if (currentState.selectedCategory == category) return
-        updateState { it.copy(selectedCategory = category) }
-    }
-
-    /**
-     * Persists or removes an article from the local database.
-     * 
-     * Uses [safeLaunch] from [BaseViewModel] to handle potential database errors.
-     */
-    private fun toggleBookmark(article: Article) {
-        safeLaunch {
-            toggleBookmarkUseCase(article)
+            is HomeEvent.OnCategorySelected -> {
+                if (currentState.selectedCategory == event.category) return
+                updateState { it.copy(selectedCategory = event.category) }
+            }
+            
+            is HomeEvent.OnBookmarkToggled -> {
+                // Background operation for database interaction
+                safeLaunch {
+                    toggleBookmarkUseCase(event.article)
+                }
+            }
+            
+            is HomeEvent.OnArticleClicked -> {
+                // Navigation is handled via side effects to ensure one-time delivery
+                sendEffect(HomeSideEffect.NavigateToDetail(event.article.url))
+            }
+            
+            HomeEvent.OnSearchClicked -> {
+                sendEffect(HomeSideEffect.NavigateToSearch)
+            }
+            
+            HomeEvent.OnRefresh -> {
+                // Actual refresh is triggered on the PagingItems in Compose
+            }
+            
+            HomeEvent.OnRetry -> {
+                // Actual retry is triggered on the PagingItems in Compose
+            }
         }
     }
 }
