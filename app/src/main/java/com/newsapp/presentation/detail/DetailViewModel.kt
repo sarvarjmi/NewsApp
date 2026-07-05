@@ -2,10 +2,12 @@ package com.newsapp.presentation.detail
 
 import androidx.lifecycle.SavedStateHandle
 import com.newsapp.domain.model.Article
-import com.newsapp.domain.usecase.bookmark.IsBookmarkedUseCase
+import com.newsapp.domain.usecase.bookmark.ObserveBookmarkStatusUseCase
 import com.newsapp.domain.usecase.bookmark.ToggleBookmarkUseCase
 import com.newsapp.presentation.common.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 /**
@@ -17,9 +19,11 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailViewModel @Inject constructor(
     private val toggleBookmarkUseCase: ToggleBookmarkUseCase,
-    private val isBookmarkedUseCase: IsBookmarkedUseCase,
+    private val observeBookmarkStatusUseCase: ObserveBookmarkStatusUseCase,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel<DetailUiState, DetailSideEffect>(DetailUiState.initial()) {
+
+    private var bookmarkJob: Job? = null
 
     /**
      * Handles incoming UI events from the Detail Screen.
@@ -56,21 +60,21 @@ class DetailViewModel @Inject constructor(
             ) 
         }
         
-        checkBookmarkStatus(article.url)
+        observeBookmarkStatus(article.url)
     }
 
     private fun toggleBookmark(article: Article) {
         safeLaunch {
             toggleBookmarkUseCase(article)
-            val isNowBookmarked = isBookmarkedUseCase(article.url)
-            updateState { it.copy(isBookmarked = isNowBookmarked) }
         }
     }
 
-    private fun checkBookmarkStatus(url: String) {
-        safeLaunch {
-            val bookmarked = isBookmarkedUseCase(url)
-            updateState { it.copy(isBookmarked = bookmarked) }
+    private fun observeBookmarkStatus(url: String) {
+        bookmarkJob?.cancel()
+        bookmarkJob = safeLaunch {
+            observeBookmarkStatusUseCase(url).collectLatest { isBookmarked ->
+                updateState { it.copy(isBookmarked = isBookmarked) }
+            }
         }
     }
 

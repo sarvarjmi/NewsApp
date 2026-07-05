@@ -105,7 +105,8 @@ fun SearchScreen(
                         viewModel.onEvent(SearchEvent.OnBookmarkToggled(article))
                     },
                     onRetry = { searchResults.retry() },
-                    isOnline = isOnline
+                    isOnline = isOnline,
+                    enableInitialShimmer = !state.isInitialLoad
                 )
             }
         }

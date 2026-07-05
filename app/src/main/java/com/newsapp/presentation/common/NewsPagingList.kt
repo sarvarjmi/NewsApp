@@ -42,6 +42,7 @@ fun NewsPagingList(
     onBookmarkClick: (Article) -> Unit,
     onRetry: () -> Unit,
     isOnline: Boolean = true,
+    enableInitialShimmer: Boolean = true,
     header: (@Composable () -> Unit)? = null
 ) {
     // Automatic reconnect: Trigger retry when coming back online if in error state
@@ -98,7 +99,7 @@ fun NewsPagingList(
             articles.apply {
                 when {
                     // Initial Load: Show Shimmer
-                    loadState.refresh is LoadState.Loading && itemCount == 0 -> {
+                    loadState.refresh is LoadState.Loading && itemCount == 0 && enableInitialShimmer -> {
                         repeat(6) { LoadingShimmer() }
                     }
 

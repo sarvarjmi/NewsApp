@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -90,8 +91,8 @@ abstract class BaseViewModel<S, E>(initialState: S) : ViewModel() {
     protected fun safeLaunch(
         context: CoroutineContext = EmptyCoroutineContext,
         block: suspend CoroutineScope.() -> Unit
-    ) {
-        viewModelScope.launch(handler + context) {
+    ): Job {
+        return viewModelScope.launch(handler + context) {
             block()
         }
     }

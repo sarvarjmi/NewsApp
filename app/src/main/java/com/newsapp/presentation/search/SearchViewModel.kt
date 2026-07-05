@@ -62,7 +62,12 @@ class SearchViewModel @Inject constructor(
         when (event) {
             is SearchEvent.OnQueryChanged -> {
                 // Update the state immediately so the SearchBar is responsive
-                updateState { it.copy(searchQuery = event.query) }
+                updateState { 
+                    it.copy(
+                        searchQuery = event.query,
+                        isInitialLoad = false
+                    ) 
+                }
             }
             
             is SearchEvent.OnBookmarkToggled -> {

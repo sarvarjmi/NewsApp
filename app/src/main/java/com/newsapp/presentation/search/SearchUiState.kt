@@ -23,6 +23,7 @@ data class SearchUiState(
     val searchHistory: List<String> = emptyList(),
     val isLoading: Boolean = false,
     val isSearchActive: Boolean = false,
+    val isInitialLoad: Boolean = true,
     val error: String? = null
 ) {
     /**
