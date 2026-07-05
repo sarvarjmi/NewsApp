@@ -17,6 +17,10 @@ class ScrollBenchmark {
     @get:Rule
     val benchmarkRule = MacrobenchmarkRule()
 
+    /**
+     * Measures jank during scrolling.
+     * Tip: Use the Android Studio Profiler during this test to check for excessive allocations.
+     */
     @Test
     fun scrollCompilationNone() = scroll(CompilationMode.None())
 

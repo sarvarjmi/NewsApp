@@ -21,6 +21,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
@@ -65,6 +66,7 @@ fun SearchBar(
             .height(56.dp)
             .padding(horizontal = MaterialThemeSpacing.medium)
             .focusRequester(focusRequester)
+            .testTag("search_input")
             .semantics {
                 contentDescription = "Search input field"
             },
