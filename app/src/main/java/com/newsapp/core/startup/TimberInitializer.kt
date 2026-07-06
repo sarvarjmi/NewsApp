@@ -9,6 +9,7 @@ import timber.log.Timber
  * Automatically initializes Timber using AndroidX Startup library.
  * This keeps the [Application.onCreate] clean and allows for parallel initialization.
  */
+@Suppress("EnsureInitializerMetadata")
 class TimberInitializer : Initializer<Unit> {
     override fun create(context: Context) {
         if (BuildConfig.DEBUG) {
