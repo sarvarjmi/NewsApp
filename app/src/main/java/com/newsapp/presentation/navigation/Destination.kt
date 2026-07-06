@@ -21,8 +21,7 @@ sealed class Destination(
     val route: Routes,
     @StringRes val labelRes: Int,
     val selectedIcon: ImageVector,
-    val unselectedIcon: ImageVector,
-    val baseUri: String? = null
+    val unselectedIcon: ImageVector
 ) {
     /**
      * Home Destination: The landing page showing top headlines.
@@ -31,8 +30,7 @@ sealed class Destination(
         route = Routes.Home,
         labelRes = R.string.home,
         selectedIcon = Icons.Filled.Home,
-        unselectedIcon = Icons.Outlined.Home,
-        baseUri = "newsapp://home"
+        unselectedIcon = Icons.Outlined.Home
     )
 
     /**
@@ -42,8 +40,7 @@ sealed class Destination(
         route = Routes.Search(),
         labelRes = R.string.search,
         selectedIcon = Icons.Filled.Search,
-        unselectedIcon = Icons.Outlined.Search,
-        baseUri = "newsapp://search"
+        unselectedIcon = Icons.Outlined.Search
     )
 
     /**
@@ -53,8 +50,7 @@ sealed class Destination(
         route = Routes.Bookmarks,
         labelRes = R.string.bookmarks,
         selectedIcon = Icons.Filled.Bookmark,
-        unselectedIcon = Icons.Outlined.BookmarkBorder,
-        baseUri = "newsapp://bookmarks"
+        unselectedIcon = Icons.Outlined.BookmarkBorder
     )
 
     companion object {

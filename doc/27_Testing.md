@@ -1,7 +1,5 @@
 # NewsApp
 
-# 27_Testing.md
-
 > **Phase:** Quality Assurance
 >
 > **Module:** Testing Strategy

@@ -23,14 +23,31 @@ class RouteParser @Inject constructor(
     fun parse(uri: Uri): Routes? {
         if (!validator.isValid(uri)) return null
 
+        val scheme = uri.scheme
         val pathSegments = uriParser.getPathSegments(uri)
-        if (pathSegments.isEmpty()) return Routes.Home
+        
+        // Resolve command: For HTTPS it's the first path segment. 
+        // For custom scheme, it's either the host or the first path segment.
+        val command = if (scheme == LinkConstants.SCHEME_CUSTOM) {
+            uri.host ?: pathSegments.getOrNull(0)
+        } else {
+            pathSegments.getOrNull(0)
+        }
 
-        return when (pathSegments[0]) {
+        if (command == null) return Routes.Home
+
+        return when (command) {
             LinkConstants.PATH_ARTICLE -> {
-                val encodedUrl = pathSegments.getOrNull(1)
-                if (validator.isValidArticleId(encodedUrl)) {
-                    val decodedUrl = Uri.decode(encodedUrl)
+                // If it's custom scheme newsapp://article/URL, the URL is the first path segment
+                // If it's HTTPS https://domain/article/URL, the URL is the second path segment
+                val articleUrl = if (scheme == LinkConstants.SCHEME_CUSTOM && uri.host == LinkConstants.PATH_ARTICLE) {
+                    pathSegments.getOrNull(0)
+                } else {
+                    pathSegments.getOrNull(1)
+                }
+                
+                if (validator.isValidArticleId(articleUrl)) {
+                    val decodedUrl = Uri.decode(articleUrl)
                     Routes.ArticleDeepLink(decodedUrl)
                 } else null
             }

@@ -1,8 +1,6 @@
 package com.newsapp.presentation.navigation
 
 import androidx.navigation.navDeepLink
-import kotlin.reflect.typeOf
-import com.newsapp.domain.model.Article
 
 /**
  * Centralized deep link definitions for use in the Navigation Graph.
