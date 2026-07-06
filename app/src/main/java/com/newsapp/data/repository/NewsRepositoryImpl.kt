@@ -66,7 +66,7 @@ class NewsRepositoryImpl @Inject constructor(
                 category = targetCategory
             ),
             pagingSourceFactory = {
-                localDataSource.getArticlesPagingSource(targetCategory)
+                localDataSource.getArticlesWithBookmarkStatusPagingSource(targetCategory)
             }
         ).flow.map { pagingData ->
             pagingData.map { it.toDomain() }

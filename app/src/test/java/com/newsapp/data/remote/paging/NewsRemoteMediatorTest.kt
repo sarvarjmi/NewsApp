@@ -2,6 +2,7 @@ package com.newsapp.data.remote.paging
 
 import androidx.paging.*
 import com.newsapp.data.local.database.NewsDatabase
+import com.newsapp.data.local.model.NewsArticleWithBookmarkStatus
 import com.newsapp.data.remote.datasource.RemoteNewsDataSource
 import com.newsapp.data.remote.dto.NewsResponseDto
 import com.newsapp.util.TestData
@@ -46,7 +47,7 @@ class NewsRemoteMediatorTest {
         every { database.newsRemoteKeysDao } returns mockk(relaxed = true)
         every { database.newsArticleDao } returns mockk(relaxed = true)
 
-        val pagingState = PagingState<Int, com.newsapp.data.local.entity.NewsArticleEntity>(
+        val pagingState = PagingState<Int, NewsArticleWithBookmarkStatus>(
             listOf(),
             null,
             PagingConfig(20),

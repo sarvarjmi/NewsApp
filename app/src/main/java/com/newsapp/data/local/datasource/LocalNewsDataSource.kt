@@ -5,8 +5,8 @@ import com.newsapp.data.local.dao.BookmarkDao
 import com.newsapp.data.local.dao.NewsArticleDao
 import com.newsapp.data.local.entity.BookmarkEntity
 import com.newsapp.data.local.entity.NewsArticleEntity
+import com.newsapp.data.local.model.NewsArticleWithBookmarkStatus
 import kotlinx.coroutines.flow.Flow
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,6 +25,7 @@ interface LocalNewsDataSource {
     suspend fun upsertArticles(articles: List<NewsArticleEntity>)
     fun getArticlesByCategory(category: String): Flow<List<NewsArticleEntity>>
     fun getArticlesPagingSource(category: String): PagingSource<Int, NewsArticleEntity>
+    fun getArticlesWithBookmarkStatusPagingSource(category: String): PagingSource<Int, NewsArticleWithBookmarkStatus>
     suspend fun deleteOldArticles(threshold: Long)
     suspend fun clearAllArticles()
     suspend fun deleteArticlesByCategory(category: String)
@@ -70,6 +71,10 @@ class LocalNewsDataSourceImpl @Inject constructor(
 
     override fun getArticlesPagingSource(category: String): PagingSource<Int, NewsArticleEntity> {
         return newsArticleDao.getArticlesPagingSource(category)
+    }
+
+    override fun getArticlesWithBookmarkStatusPagingSource(category: String): PagingSource<Int, NewsArticleWithBookmarkStatus> {
+        return newsArticleDao.getArticlesWithBookmarkStatusPagingSource(category)
     }
 
     override suspend fun deleteOldArticles(threshold: Long) {

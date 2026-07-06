@@ -1,6 +1,7 @@
 package com.newsapp.data.local.mapper
 
 import com.newsapp.data.local.entity.NewsArticleEntity
+import com.newsapp.data.local.model.NewsArticleWithBookmarkStatus
 import com.newsapp.domain.model.Article
 import com.newsapp.domain.model.Source
 
@@ -30,4 +31,8 @@ fun NewsArticleEntity.toDomain(): Article {
         publishedAt = publishedAt,
         source = Source(id = sourceId, name = sourceName)
     )
+}
+
+fun NewsArticleWithBookmarkStatus.toDomain(): Article {
+    return article.toDomain().copy(isBookmarked = isBookmarked)
 }

@@ -7,9 +7,9 @@ import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.newsapp.core.network.NetworkResult
 import com.newsapp.data.local.database.NewsDatabase
-import com.newsapp.data.local.entity.NewsArticleEntity
 import com.newsapp.data.local.entity.NewsRemoteKeysEntity
 import com.newsapp.data.local.mapper.toCacheEntity
+import com.newsapp.data.local.model.NewsArticleWithBookmarkStatus
 import com.newsapp.data.remote.datasource.RemoteNewsDataSource
 import com.newsapp.data.remote.mapper.toDomain
 import timber.log.Timber
@@ -19,11 +19,11 @@ class NewsRemoteMediator(
     private val remoteDataSource: RemoteNewsDataSource,
     private val database: NewsDatabase,
     private val category: String
-) : RemoteMediator<Int, NewsArticleEntity>() {
+) : RemoteMediator<Int, NewsArticleWithBookmarkStatus>() {
 
     override suspend fun load(
         loadType: LoadType,
-        state: PagingState<Int, NewsArticleEntity>
+        state: PagingState<Int, NewsArticleWithBookmarkStatus>
     ): MediatorResult {
         val page = when (loadType) {
             LoadType.REFRESH -> 1
@@ -76,10 +76,10 @@ class NewsRemoteMediator(
         }
     }
 
-    private suspend fun getRemoteKeysForLastItem(state: PagingState<Int, NewsArticleEntity>): NewsRemoteKeysEntity? {
+    private suspend fun getRemoteKeysForLastItem(state: PagingState<Int, NewsArticleWithBookmarkStatus>): NewsRemoteKeysEntity? {
         return state.pages.lastOrNull { it.data.isNotEmpty() }?.data?.lastOrNull()
-            ?.let { article ->
-                database.newsRemoteKeysDao.getRemoteKeysForArticle(article.url)
+            ?.let { wrapped ->
+                database.newsRemoteKeysDao.getRemoteKeysForArticle(wrapped.article.url)
             }
     }
 }
