@@ -32,9 +32,11 @@ sealed interface Routes {
     /**
      * The Search screen.
      * Provides a debounced search interface to explore articles by keywords.
+     * 
+     * @param query Optional initial search keywords (e.g., from a deep link).
      */
     @Serializable
-    data object Search : Routes
+    data class Search(val query: String? = null) : Routes
 
     /**
      * The Bookmarks screen.
@@ -51,6 +53,14 @@ sealed interface Routes {
      */
     @Serializable
     data class Detail(val article: Article) : Routes
+
+    /**
+     * Specialized route for Deep Links where only the article URL is available.
+     * 
+     * @param url The canonical URL of the article.
+     */
+    @Serializable
+    data class ArticleDeepLink(val url: String) : Routes
 
     /**
      * The WebView screen.

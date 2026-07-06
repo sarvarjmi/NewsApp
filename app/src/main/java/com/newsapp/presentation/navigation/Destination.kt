@@ -39,7 +39,7 @@ sealed class Destination(
      * Search Destination: The search interface for articles.
      */
     data object Search : Destination(
-        route = Routes.Search,
+        route = Routes.Search(),
         labelRes = R.string.search,
         selectedIcon = Icons.Filled.Search,
         unselectedIcon = Icons.Outlined.Search,

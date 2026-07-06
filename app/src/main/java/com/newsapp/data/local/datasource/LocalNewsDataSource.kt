@@ -28,6 +28,7 @@ interface LocalNewsDataSource {
     suspend fun deleteOldArticles(threshold: Long)
     suspend fun clearAllArticles()
     suspend fun deleteArticlesByCategory(category: String)
+    suspend fun getCachedArticleByUrl(url: String): NewsArticleEntity?
 }
 
 /**
@@ -81,5 +82,13 @@ class LocalNewsDataSourceImpl @Inject constructor(
 
     override suspend fun deleteArticlesByCategory(category: String) {
         newsArticleDao.deleteArticlesByCategory(category)
+    }
+
+    override suspend fun getCachedArticleByUrl(url: String): NewsArticleEntity? {
+        return try {
+            newsArticleDao.getArticleByUrl(url)
+        } catch (e: Exception) {
+            null
+        }
     }
 }

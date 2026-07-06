@@ -23,6 +23,9 @@ interface NewsArticleDao {
     @Query("SELECT * FROM news_articles WHERE category = :category ORDER BY publishedAt DESC")
     fun getArticlesPagingSource(category: String): PagingSource<Int, NewsArticleEntity>
 
+    @Query("SELECT * FROM news_articles WHERE url = :url LIMIT 1")
+    suspend fun getArticleByUrl(url: String): NewsArticleEntity?
+
     @Query("DELETE FROM news_articles WHERE category = :category")
     suspend fun deleteArticlesByCategory(category: String)
 

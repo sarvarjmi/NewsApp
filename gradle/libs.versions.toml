@@ -52,6 +52,7 @@ espressoCore = "3.7.0"
 mockk = "1.14.11"
 turbine = "1.2.1"
 leakcanary = "2.14"
+robolectric = "4.16.1"
 
 [libraries]
 # AndroidX Core
@@ -124,6 +125,7 @@ okhttp-mockwebserver = { group = "com.squareup.okhttp3", name = "mockwebserver",
 androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
 google-errorprone-annotations = { group = "com.google.errorprone", name = "error_prone_annotations", version = "2.50.0" }
 leakcanary-android = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakcanary" }
+robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

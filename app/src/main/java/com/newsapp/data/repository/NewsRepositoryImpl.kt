@@ -15,7 +15,7 @@ import com.newsapp.data.local.mapper.toDomain
 import com.newsapp.data.local.mapper.toEntity
 import com.newsapp.data.remote.api.ApiConstants
 import com.newsapp.data.remote.datasource.RemoteNewsDataSource
-import com.newsapp.data.remote.mapper.toDomain
+import com.newsapp.data.remote.mapper.toDomain as toDomainFromRemote
 import com.newsapp.data.remote.paging.NewsPagingSource
 import com.newsapp.data.remote.paging.NewsRemoteMediator
 import com.newsapp.domain.model.Article
@@ -97,7 +97,7 @@ class NewsRepositoryImpl @Inject constructor(
             is NetworkResult.Success -> {
                 val articles = result.data.articles.map { dto ->
                     val isBookmarked = localDataSource.isBookmarked(dto.url)
-                    dto.toDomain().copy(isBookmarked = isBookmarked)
+                    dto.toDomainFromRemote().copy(isBookmarked = isBookmarked)
                 }
                 
                 database.withTransaction {
@@ -154,5 +154,14 @@ class NewsRepositoryImpl @Inject constructor(
 
     override suspend fun isBookmarked(url: String): Boolean {
         return localDataSource.isBookmarked(url)
+    }
+
+    override suspend fun getArticleFromCache(url: String): Article? {
+        // Check bookmarks first
+        val bookmarked = localDataSource.getBookmarkByUrl(url)
+        if (bookmarked != null) return bookmarked.toDomain()
+        
+        // Then check temporary cache
+        return localDataSource.getCachedArticleByUrl(url)?.toDomain()
     }
 }

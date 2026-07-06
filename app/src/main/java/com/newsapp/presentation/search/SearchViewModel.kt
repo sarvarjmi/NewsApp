@@ -82,4 +82,12 @@ class SearchViewModel @Inject constructor(
             }
         }
     }
+
+    /**
+     * Initializes the search query from an external source (e.g., Deep Link).
+     */
+    fun initQuery(query: String?) {
+        if (query.isNullOrBlank() || query == currentState.searchQuery) return
+        updateState { it.copy(searchQuery = query, isInitialLoad = false) }
+    }
 }

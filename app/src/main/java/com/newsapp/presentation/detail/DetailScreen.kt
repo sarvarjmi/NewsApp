@@ -64,17 +64,19 @@ import java.nio.charset.StandardCharsets
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(
-    article: Article,
     onBackClick: () -> Unit,
     onNavigateToWebView: (String) -> Unit,
+    article: Article? = null,
     viewModel: DetailViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    // Initialize the ViewModel with the passed article
+    // Initialize the ViewModel with the passed article if provided
     LaunchedEffect(article) {
-        viewModel.init(article)
+        if (article != null) {
+            viewModel.init(article)
+        }
     }
 
     // Handle One-time Side Effects (Navigation, External Apps)

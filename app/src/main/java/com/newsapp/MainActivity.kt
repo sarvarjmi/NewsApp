@@ -1,36 +1,33 @@
 package com.newsapp
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
-import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.newsapp.core.dispatcher.DispatcherProvider
 import com.newsapp.core.network.NetworkMonitor
 import com.newsapp.presentation.common.OfflineBanner
 import com.newsapp.presentation.common.SnackbarManager
-import com.newsapp.presentation.navigation.Destination
+import com.newsapp.presentation.navigation.DeepLinkHandler
 import com.newsapp.presentation.navigation.NavGraph
 import com.newsapp.presentation.navigation.NewsBottomBar
 import com.newsapp.presentation.navigation.Routes
@@ -50,10 +47,18 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var snackbarManager: SnackbarManager
 
+    @Inject
+    lateinit var deepLinkHandler: DeepLinkHandler
+    
+    // State to track the current intent for deep link processing
+    private var currentIntent by mutableStateOf<Intent?>(null)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        currentIntent = intent
+        
         setContent {
             NewsAppTheme {
                 val navController = rememberNavController()
@@ -105,7 +110,21 @@ class MainActivity : ComponentActivity() {
                         )
                     )
                 }
+
+                // Handle deep link whenever the intent changes
+                LaunchedEffect(currentIntent, navController) {
+                    currentIntent?.let {
+                        deepLinkHandler.handle(it, navController)
+                        currentIntent = null // Reset after handling
+                    }
+                }
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        currentIntent = intent
     }
 }

@@ -47,17 +47,8 @@ fun NewsBottomBar(
                     )
                 },
                 onClick = {
-                    // Perform standard bottom navigation logic:
-                    // 1. popUpTo start destination to avoid building a huge stack
-                    // 2. saveState/restoreState to preserve scroll positions and ViewModel data
-                    // 3. launchSingleTop to prevent multiple instances of the same screen
-                    navController.navigate(destination.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
+                    // Use centralized extension for top-level navigation
+                    navController.navigateToTopLevel(destination.route)
                 }
             )
         }

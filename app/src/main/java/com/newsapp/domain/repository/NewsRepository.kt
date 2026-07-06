@@ -87,4 +87,12 @@ interface NewsRepository {
      * @return true if the article is bookmarked, false otherwise.
      */
     suspend fun isBookmarked(url: String): Boolean
+
+    /**
+     * Attempts to retrieve a news article from the local cache.
+     * 
+     * @param url The unique canonical URL of the article.
+     * @return The [Article] if found in cache or bookmarks, null otherwise.
+     */
+    suspend fun getArticleFromCache(url: String): Article?
 }
