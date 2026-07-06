@@ -1,7 +1,10 @@
 package com.newsapp.data.local.datasource
 
+import androidx.paging.PagingSource
 import com.newsapp.data.local.dao.BookmarkDao
+import com.newsapp.data.local.dao.NewsArticleDao
 import com.newsapp.data.local.entity.BookmarkEntity
+import com.newsapp.data.local.entity.NewsArticleEntity
 import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 import javax.inject.Inject
@@ -11,40 +14,37 @@ import javax.inject.Singleton
  * Interface for the Local Data Source.
  */
 interface LocalNewsDataSource {
+    // Bookmark operations
     suspend fun upsertBookmark(bookmark: BookmarkEntity)
     suspend fun deleteBookmark(bookmark: BookmarkEntity)
     fun getBookmarks(): Flow<List<BookmarkEntity>>
     suspend fun getBookmarkByUrl(url: String): BookmarkEntity?
     suspend fun isBookmarked(url: String): Boolean
+
+    // Cache operations for the news feed
+    suspend fun upsertArticles(articles: List<NewsArticleEntity>)
+    fun getArticlesByCategory(category: String): Flow<List<NewsArticleEntity>>
+    fun getArticlesPagingSource(category: String): PagingSource<Int, NewsArticleEntity>
+    suspend fun deleteOldArticles(threshold: Long)
+    suspend fun clearAllArticles()
+    suspend fun deleteArticlesByCategory(category: String)
 }
 
 /**
- * Implementation of [LocalNewsDataSource] using [BookmarkDao].
- * 
- * This class encapsulates Room interactions and handles potential 
- * database exceptions gracefully.
+ * Implementation of [LocalNewsDataSource] using Room DAOs.
  */
 @Singleton
 class LocalNewsDataSourceImpl @Inject constructor(
-    private val bookmarkDao: BookmarkDao
+    private val bookmarkDao: BookmarkDao,
+    private val newsArticleDao: NewsArticleDao
 ) : LocalNewsDataSource {
 
     override suspend fun upsertBookmark(bookmark: BookmarkEntity) {
-        try {
-            bookmarkDao.upsert(bookmark)
-        } catch (e: Exception) {
-            Timber.e(e, "Error upserting bookmark: ${bookmark.url}")
-            throw e
-        }
+        bookmarkDao.upsert(bookmark)
     }
 
     override suspend fun deleteBookmark(bookmark: BookmarkEntity) {
-        try {
-            bookmarkDao.delete(bookmark)
-        } catch (e: Exception) {
-            Timber.e(e, "Error deleting bookmark: ${bookmark.url}")
-            throw e
-        }
+        bookmarkDao.delete(bookmark)
     }
 
     override fun getBookmarks(): Flow<List<BookmarkEntity>> {
@@ -52,20 +52,34 @@ class LocalNewsDataSourceImpl @Inject constructor(
     }
 
     override suspend fun getBookmarkByUrl(url: String): BookmarkEntity? {
-        return try {
-            bookmarkDao.getBookmarkByUrl(url)
-        } catch (e: Exception) {
-            Timber.e(e, "Error fetching bookmark by URL: $url")
-            null
-        }
+        return bookmarkDao.getBookmarkByUrl(url)
     }
 
     override suspend fun isBookmarked(url: String): Boolean {
-        return try {
-            bookmarkDao.isBookmarked(url)
-        } catch (e: Exception) {
-            Timber.e(e, "Error checking if bookmarked: $url")
-            false
-        }
+        return bookmarkDao.isBookmarked(url)
+    }
+
+    override suspend fun upsertArticles(articles: List<NewsArticleEntity>) {
+        newsArticleDao.upsertArticles(articles)
+    }
+
+    override fun getArticlesByCategory(category: String): Flow<List<NewsArticleEntity>> {
+        return newsArticleDao.getArticlesByCategory(category)
+    }
+
+    override fun getArticlesPagingSource(category: String): PagingSource<Int, NewsArticleEntity> {
+        return newsArticleDao.getArticlesPagingSource(category)
+    }
+
+    override suspend fun deleteOldArticles(threshold: Long) {
+        newsArticleDao.deleteOldArticles(threshold)
+    }
+
+    override suspend fun clearAllArticles() {
+        newsArticleDao.clearAll()
+    }
+
+    override suspend fun deleteArticlesByCategory(category: String) {
+        newsArticleDao.deleteArticlesByCategory(category)
     }
 }

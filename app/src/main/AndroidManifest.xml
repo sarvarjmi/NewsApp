@@ -33,6 +33,10 @@
             <meta-data
                 android:name="com.newsapp.core.startup.TimberInitializer"
                 android:value="androidx.startup.Initializer" />
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup.Initializer"
+                tools:node="remove" />
         </provider>
     </application>
 

@@ -1,14 +1,23 @@
 package com.newsapp.data.repository
 
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.map
+import androidx.room.withTransaction
+import com.newsapp.core.network.NetworkResult
+import com.newsapp.data.local.database.NewsDatabase
 import com.newsapp.data.local.datasource.LocalNewsDataSource
+import com.newsapp.data.local.entity.NewsRemoteKeysEntity
+import com.newsapp.data.local.mapper.toCacheEntity
 import com.newsapp.data.local.mapper.toDomain
 import com.newsapp.data.local.mapper.toEntity
 import com.newsapp.data.remote.api.ApiConstants
 import com.newsapp.data.remote.datasource.RemoteNewsDataSource
+import com.newsapp.data.remote.mapper.toDomain
 import com.newsapp.data.remote.paging.NewsPagingSource
+import com.newsapp.data.remote.paging.NewsRemoteMediator
 import com.newsapp.domain.model.Article
 import com.newsapp.domain.repository.NewsRepository
 import kotlinx.coroutines.flow.Flow
@@ -21,22 +30,14 @@ import javax.inject.Singleton
 /**
  * Concrete implementation of [NewsRepository] coordinating between remote 
  * and local data sources.
- *
- * This implementation leverages Paging 3 for the remote API data stream 
- * and a Local Data Source for bookmark persistence.
  */
 @Singleton
 class NewsRepositoryImpl @Inject constructor(
     private val remoteDataSource: RemoteNewsDataSource,
-    private val localDataSource: LocalNewsDataSource
+    private val localDataSource: LocalNewsDataSource,
+    private val database: NewsDatabase
 ) : NewsRepository {
 
-    /**
-     * Paging Configuration:
-     * - [pageSize]: 20. Aligned with News API default limits.
-     * - [prefetchDistance]: 5. Smooth scrolling by fetching next page in advance.
-     * - [enablePlaceholders]: false. Simplifies UI logic by only showing loaded items.
-     */
     private val pagingConfig = PagingConfig(
         pageSize = ApiConstants.DEFAULT_PAGE_SIZE,
         prefetchDistance = 5,
@@ -54,17 +55,22 @@ class NewsRepositoryImpl @Inject constructor(
         }
     }
 
+    @OptIn(ExperimentalPagingApi::class)
     override fun getTopHeadlines(category: String?): Flow<PagingData<Article>> {
+        val targetCategory = category ?: "general"
         return Pager(
             config = pagingConfig,
+            remoteMediator = NewsRemoteMediator(
+                remoteDataSource = remoteDataSource,
+                database = database,
+                category = targetCategory
+            ),
             pagingSourceFactory = {
-                NewsPagingSource(
-                    remoteDataSource = remoteDataSource,
-                    isBookmarked = { localDataSource.isBookmarked(it) },
-                    category = category
-                ).also { activePagingSources.add(it) }
+                localDataSource.getArticlesPagingSource(targetCategory)
             }
-        ).flow
+        ).flow.map { pagingData ->
+            pagingData.map { it.toDomain() }
+        }
     }
 
     override fun searchNews(query: String): Flow<PagingData<Article>> {
@@ -81,7 +87,43 @@ class NewsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun refreshNews() {
-        // Paging 3 automatically handles refresh via the UI layer's 'adapter.refresh()'.
+        val result = remoteDataSource.getTopHeadlines(
+            category = "general",
+            page = 1,
+            pageSize = ApiConstants.DEFAULT_PAGE_SIZE
+        )
+
+        when (result) {
+            is NetworkResult.Success -> {
+                val articles = result.data.articles.map { dto ->
+                    val isBookmarked = localDataSource.isBookmarked(dto.url)
+                    dto.toDomain().copy(isBookmarked = isBookmarked)
+                }
+                
+                database.withTransaction {
+                    // Sync with RemoteMediator logic: Clear existing general news and keys
+                    database.newsRemoteKeysDao.clearRemoteKeys()
+                    database.newsArticleDao.deleteArticlesByCategory("general")
+                    
+                    val entities = articles.map { it.toCacheEntity("general") }
+                    val keys = articles.map { 
+                        NewsRemoteKeysEntity(
+                            articleUrl = it.url, 
+                            prevPage = null, 
+                            nextPage = 2 
+                        ) 
+                    }
+                    
+                    database.newsArticleDao.upsertArticles(entities)
+                    database.newsRemoteKeysDao.upsertRemoteKeys(keys)
+                }
+                invalidateActiveSources()
+            }
+            is NetworkResult.Error -> {
+                throw result.exception ?: Exception(result.message)
+            }
+            else -> { /* Ignore loading state */ }
+        }
     }
 
     override suspend fun saveBookmark(article: Article) {

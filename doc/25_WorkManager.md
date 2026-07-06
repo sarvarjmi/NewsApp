@@ -1,7 +1,5 @@
 # NewsApp
 
-# 25_WorkManager.md
-
 > **Phase:** Background Processing
 >
 > **Module:** WorkManager

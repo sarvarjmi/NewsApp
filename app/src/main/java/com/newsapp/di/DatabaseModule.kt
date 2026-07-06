@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Room
 import com.newsapp.core.common.DatabaseConstants
 import com.newsapp.data.local.dao.BookmarkDao
+import com.newsapp.data.local.dao.NewsArticleDao
+import com.newsapp.data.local.dao.NewsRemoteKeysDao
 import com.newsapp.data.local.database.NewsDatabase
 import dagger.Module
 import dagger.Provides
@@ -19,9 +21,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
 
-    /**
-     * Provides the singleton instance of [NewsDatabase].
-     */
     @Provides
     @Singleton
     fun provideNewsDatabase(@ApplicationContext context: Context): NewsDatabase {
@@ -30,16 +29,25 @@ object DatabaseModule {
             NewsDatabase::class.java,
             DatabaseConstants.DATABASE_NAME
         )
-        .fallbackToDestructiveMigration(dropAllTables = true)
+        .fallbackToDestructiveMigration(false)
         .build()
     }
 
-    /**
-     * Provides the [BookmarkDao] to interact with the bookmarks table.
-     */
     @Provides
     @Singleton
     fun provideBookmarkDao(database: NewsDatabase): BookmarkDao {
         return database.bookmarkDao
+    }
+
+    @Provides
+    @Singleton
+    fun provideNewsArticleDao(database: NewsDatabase): NewsArticleDao {
+        return database.newsArticleDao
+    }
+
+    @Provides
+    @Singleton
+    fun provideNewsRemoteKeysDao(database: NewsDatabase): NewsRemoteKeysDao {
+        return database.newsRemoteKeysDao
     }
 }
