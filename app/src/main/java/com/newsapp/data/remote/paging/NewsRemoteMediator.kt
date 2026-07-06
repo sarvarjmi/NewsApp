@@ -18,7 +18,8 @@ import timber.log.Timber
 class NewsRemoteMediator(
     private val remoteDataSource: RemoteNewsDataSource,
     private val database: NewsDatabase,
-    private val category: String
+    private val category: String,
+    private val query: String? = null
 ) : RemoteMediator<Int, NewsArticleWithBookmarkStatus>() {
 
     override suspend fun load(
@@ -36,13 +37,21 @@ class NewsRemoteMediator(
             }
         }
 
-        Timber.d("RemoteMediator: Loading page $page for category=$category")
+        Timber.d("RemoteMediator: Loading page $page for category=$category, query=$query")
 
-        val result = remoteDataSource.getTopHeadlines(
-            category = category,
-            page = page,
-            pageSize = state.config.pageSize
-        )
+        val result = if (query != null) {
+            remoteDataSource.searchNews(
+                query = query,
+                page = page,
+                pageSize = state.config.pageSize
+            )
+        } else {
+            remoteDataSource.getTopHeadlines(
+                category = category,
+                page = page,
+                pageSize = state.config.pageSize
+            )
+        }
 
         return when (result) {
             is NetworkResult.Success -> {

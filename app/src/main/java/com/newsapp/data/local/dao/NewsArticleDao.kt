@@ -9,9 +9,6 @@ import com.newsapp.data.local.entity.NewsArticleEntity
 import com.newsapp.data.local.model.NewsArticleWithBookmarkStatus
 import kotlinx.coroutines.flow.Flow
 
-/**
- * DAO for managing the temporary news articles cache.
- */
 @Dao
 interface NewsArticleDao {
 

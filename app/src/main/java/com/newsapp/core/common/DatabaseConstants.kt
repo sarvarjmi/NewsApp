@@ -12,5 +12,5 @@ object DatabaseConstants {
     /**
      * Current version of the database schema.
      */
-    const val DATABASE_VERSION = 3
+    const val DATABASE_VERSION = 1
 }

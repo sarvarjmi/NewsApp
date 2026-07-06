@@ -73,17 +73,23 @@ class NewsRepositoryImpl @Inject constructor(
         }
     }
 
+    @OptIn(ExperimentalPagingApi::class)
     override fun searchNews(query: String): Flow<PagingData<Article>> {
+        val targetCategory = "search_$query"
         return Pager(
             config = pagingConfig,
+            remoteMediator = NewsRemoteMediator(
+                remoteDataSource = remoteDataSource,
+                database = database,
+                category = targetCategory,
+                query = query
+            ),
             pagingSourceFactory = {
-                NewsPagingSource(
-                    remoteDataSource = remoteDataSource,
-                    isBookmarked = { localDataSource.isBookmarked(it) },
-                    query = query
-                ).also { activePagingSources.add(it) }
+                localDataSource.getArticlesWithBookmarkStatusPagingSource(targetCategory)
             }
-        ).flow
+        ).flow.map { pagingData ->
+            pagingData.map { it.toDomain() }
+        }
     }
 
     override suspend fun refreshNews() {

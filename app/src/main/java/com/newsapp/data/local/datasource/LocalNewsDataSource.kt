@@ -10,21 +10,14 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/**
- * Interface for the Local Data Source.
- */
 interface LocalNewsDataSource {
-    // Bookmark operations
     suspend fun upsertBookmark(bookmark: BookmarkEntity)
     suspend fun deleteBookmark(bookmark: BookmarkEntity)
     fun getBookmarks(): Flow<List<BookmarkEntity>>
     suspend fun getBookmarkByUrl(url: String): BookmarkEntity?
     suspend fun isBookmarked(url: String): Boolean
-
-    // Cache operations for the news feed
     suspend fun upsertArticles(articles: List<NewsArticleEntity>)
     fun getArticlesByCategory(category: String): Flow<List<NewsArticleEntity>>
-    fun getArticlesPagingSource(category: String): PagingSource<Int, NewsArticleEntity>
     fun getArticlesWithBookmarkStatusPagingSource(category: String): PagingSource<Int, NewsArticleWithBookmarkStatus>
     suspend fun deleteOldArticles(threshold: Long)
     suspend fun clearAllArticles()
@@ -32,9 +25,6 @@ interface LocalNewsDataSource {
     suspend fun getCachedArticleByUrl(url: String): NewsArticleEntity?
 }
 
-/**
- * Implementation of [LocalNewsDataSource] using Room DAOs.
- */
 @Singleton
 class LocalNewsDataSourceImpl @Inject constructor(
     private val bookmarkDao: BookmarkDao,
@@ -67,10 +57,6 @@ class LocalNewsDataSourceImpl @Inject constructor(
 
     override fun getArticlesByCategory(category: String): Flow<List<NewsArticleEntity>> {
         return newsArticleDao.getArticlesByCategory(category)
-    }
-
-    override fun getArticlesPagingSource(category: String): PagingSource<Int, NewsArticleEntity> {
-        return newsArticleDao.getArticlesPagingSource(category)
     }
 
     override fun getArticlesWithBookmarkStatusPagingSource(category: String): PagingSource<Int, NewsArticleWithBookmarkStatus> {

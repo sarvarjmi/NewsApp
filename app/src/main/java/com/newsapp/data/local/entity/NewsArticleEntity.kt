@@ -5,8 +5,6 @@ import androidx.room.PrimaryKey
 
 /**
  * Database Entity representing a cached news article in the main feed.
- * 
- * Unlike bookmarks, these articles are temporary and managed by background cleanup workers.
  */
 @Entity(tableName = "news_articles")
 data class NewsArticleEntity(
@@ -20,6 +18,9 @@ data class NewsArticleEntity(
     val publishedAt: String,
     val sourceId: String?,
     val sourceName: String,
+    /**
+     * Identifies the collection this article belongs to (e.g., "general" or "search_query").
+     */
     val category: String,
     val cachedAt: Long = System.currentTimeMillis()
 )
