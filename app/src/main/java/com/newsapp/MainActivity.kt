@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -19,12 +20,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.newsapp.core.dispatcher.DispatcherProvider
 import com.newsapp.core.network.NetworkMonitor
+import com.newsapp.presentation.ThemeViewModel
 import com.newsapp.presentation.common.OfflineBanner
 import com.newsapp.presentation.common.SnackbarManager
 import com.newsapp.presentation.navigation.DeepLinkHandler
@@ -60,7 +63,11 @@ class MainActivity : ComponentActivity() {
         currentIntent = intent
         
         setContent {
-            NewsAppTheme {
+            val themeViewModel: ThemeViewModel = hiltViewModel()
+            val themePreference by themeViewModel.isDarkMode.collectAsState()
+            val isDarkMode = themePreference ?: isSystemInDarkTheme()
+
+            NewsAppTheme(darkTheme = isDarkMode) {
                 val navController = rememberNavController()
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentDestination = navBackStackEntry?.destination
@@ -105,6 +112,8 @@ class MainActivity : ComponentActivity() {
                     NavGraph(
                         navController = navController,
                         isOnline = isOnline,
+                        isDarkMode = isDarkMode,
+                        onToggleTheme = { themeViewModel.toggleTheme(isDarkMode) },
                         modifier = Modifier.padding(
                             bottom = innerPadding.calculateBottomPadding()
                         )

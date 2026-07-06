@@ -30,6 +30,8 @@ import kotlin.reflect.typeOf
 fun NavGraph(
     navController: NavHostController,
     isOnline: Boolean,
+    isDarkMode: Boolean,
+    onToggleTheme: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     NavHost(
@@ -49,6 +51,8 @@ fun NavGraph(
                 HomeScreen(
                     viewModel = viewModel,
                     isOnline = isOnline,
+                    isDarkMode = isDarkMode,
+                    onToggleTheme = onToggleTheme,
                     onNavigateToDetail = { article ->
                         navController.navigate(Routes.Detail(article))
                     },

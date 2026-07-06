@@ -12,7 +12,9 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -49,6 +51,8 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     viewModel: HomeViewModel,
     isOnline: Boolean,
+    isDarkMode: Boolean,
+    onToggleTheme: () -> Unit,
     onNavigateToDetail: (Article) -> Unit,
     onNavigateToSearch: () -> Unit
 ) {
@@ -93,6 +97,12 @@ fun HomeScreen(
                 actions = {
                     IconButton(onClick = { viewModel.onEvent(HomeEvent.OnSearchClicked) }) {
                         Icon(imageVector = Icons.Default.Search, contentDescription = "Search News")
+                    }
+                    IconButton(onClick = onToggleTheme) {
+                        Icon(
+                            imageVector = if (isDarkMode) Icons.Default.LightMode else Icons.Default.DarkMode,
+                            contentDescription = "Toggle Theme"
+                        )
                     }
                 },
                 scrollBehavior = scrollBehavior
