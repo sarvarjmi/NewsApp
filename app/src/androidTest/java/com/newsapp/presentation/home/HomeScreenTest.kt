@@ -39,6 +39,8 @@ class HomeScreenTest {
             HomeScreen(
                 viewModel = viewModel,
                 isOnline = true,
+                isDarkMode = false,
+                onToggleTheme = {},
                 onNavigateToDetail = {},
                 onNavigateToSearch = {}
             )
@@ -58,6 +60,8 @@ class HomeScreenTest {
             HomeScreen(
                 viewModel = viewModel,
                 isOnline = true,
+                isDarkMode = false,
+                onToggleTheme = {},
                 onNavigateToDetail = {},
                 onNavigateToSearch = {}
             )

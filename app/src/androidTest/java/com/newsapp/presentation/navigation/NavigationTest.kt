@@ -19,7 +19,12 @@ class NavigationTest {
         composeTestRule.setContent {
             NewsAppTheme {
                 val navController = rememberNavController()
-                NavGraph(navController = navController, isOnline = true)
+                NavGraph(
+                    navController = navController,
+                    isOnline = true,
+                    isDarkMode = false,
+                    onToggleTheme = {}
+                )
             }
         }
 
