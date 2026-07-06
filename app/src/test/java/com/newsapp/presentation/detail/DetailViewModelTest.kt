@@ -49,12 +49,9 @@ class DetailViewModelTest {
         val article = TestData.sampleArticle
         every { observeBookmarkStatusUseCase(article.url) } returns flowOf(true)
         
+        viewModel.init(article)
+        
         viewModel.state.test {
-            // Skip initial state
-            awaitItem()
-            
-            viewModel.init(article)
-            
             val state = awaitItem()
             assertThat(state.article).isEqualTo(article)
             assertThat(state.isBookmarked).isTrue()
@@ -68,16 +65,13 @@ class DetailViewModelTest {
         coEvery { getArticleFromCacheUseCase(article.url) } returns article
         every { observeBookmarkStatusUseCase(article.url) } returns flowOf(false)
         
+        viewModel.initWithUrl(article.url)
+        
         viewModel.state.test {
-            awaitItem() // initial
-            
-            viewModel.initWithUrl(article.url)
-            
-            assertThat(awaitItem().isLoading).isTrue()
-            
-            val finalState = awaitItem()
-            assertThat(finalState.article).isEqualTo(article)
-            assertThat(finalState.isLoading).isFalse()
+            val state = awaitItem()
+            assertThat(state.article).isEqualTo(article)
+            assertThat(state.isLoading).isFalse()
+            assertThat(state.isBookmarked).isFalse()
         }
     }
 

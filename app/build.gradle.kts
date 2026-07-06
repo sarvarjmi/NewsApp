@@ -131,6 +131,7 @@ dependencies {
     testImplementation(libs.jupiter.api)
     testRuntimeOnly(libs.jupiter.engine)
     testImplementation(libs.jupiter.params)
+    testRuntimeOnly(libs.junitplatform.launcher)
     testImplementation(libs.mockk)
     testImplementation(libs.turbine)
     testImplementation(libs.google.truth)

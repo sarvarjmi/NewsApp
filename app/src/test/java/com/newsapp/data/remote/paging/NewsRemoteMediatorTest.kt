@@ -42,7 +42,7 @@ class NewsRemoteMediatorTest {
         
         // Mocking database transaction and DAOs
         coEvery { database.withTransaction(any<suspend () -> Any>()) } coAnswers {
-            (args[0] as suspend () -> Any).invoke()
+            (args[1] as suspend () -> Any).invoke()
         }
         every { database.newsRemoteKeysDao } returns mockk(relaxed = true)
         every { database.newsArticleDao } returns mockk(relaxed = true)
