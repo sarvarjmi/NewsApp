@@ -39,6 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.compose.ui.res.stringResource
+import com.newsapp.R
 import com.newsapp.domain.model.Article
 import com.newsapp.presentation.common.CategoryChip
 import com.newsapp.presentation.common.NewsPagingList
@@ -88,19 +90,22 @@ fun HomeScreen(
             TopAppBar(
                 title = { 
                     Text(
-                        text = "NewsApp", 
+                        text = stringResource(R.string.app_name), 
                         style = MaterialTheme.typography.headlineMedium, 
                         fontWeight = FontWeight.Bold
                     ) 
                 },
                 actions = {
                     IconButton(onClick = { viewModel.onEvent(HomeEvent.OnSearchClicked) }) {
-                        Icon(imageVector = Icons.Default.Search, contentDescription = "Search News")
+                        Icon(
+                            imageVector = Icons.Default.Search, 
+                            contentDescription = stringResource(R.string.search_news)
+                        )
                     }
                     IconButton(onClick = onToggleTheme) {
                         Icon(
                             imageVector = if (isDarkMode) Icons.Default.LightMode else Icons.Default.DarkMode,
-                            contentDescription = "Toggle Theme"
+                            contentDescription = stringResource(R.string.toggle_theme)
                         )
                     }
                 },
@@ -122,7 +127,10 @@ fun HomeScreen(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                 ) {
-                    Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Scroll to top")
+                    Icon(
+                        Icons.Default.KeyboardArrowUp, 
+                        contentDescription = stringResource(R.string.scroll_to_top)
+                    )
                 }
             }
         }
@@ -159,7 +167,7 @@ fun HomeScreen(
                     isOnline = isOnline,
                     header = {
                         Text(
-                            text = "Breaking News", 
+                            text = stringResource(R.string.breaking_news),
                             style = MaterialTheme.typography.titleLarge, 
                             modifier = Modifier.padding(
                                 horizontal = MaterialThemeSpacing.medium, 

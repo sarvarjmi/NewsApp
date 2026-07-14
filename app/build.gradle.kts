@@ -9,6 +9,26 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.room)
     alias(libs.plugins.baselineProfile)
+    alias(libs.plugins.detekt)
+    alias(libs.plugins.ktlint)
+}
+
+detekt {
+    toolVersion = libs.versions.detekt.get()
+    config.setFrom(files("$rootDir/config/detekt.yml"))
+    buildUponDefaultConfig = true
+    allRules = false
+    autoCorrect = true
+}
+
+ktlint {
+    version.set("1.3.1")
+    android.set(true)
+    ignoreFailures.set(false)
+    reporters {
+        reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.PLAIN)
+        reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.CHECKSTYLE)
+    }
 }
 
 android {
@@ -52,6 +72,13 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+    }
+
+    lint {
+        abortOnError = true
+        checkReleaseBuilds = true
+        warningsAsErrors = true
+        lintConfig = file("$rootDir/config/lint.xml")
     }
 
     testOptions {
@@ -125,6 +152,7 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.kotlinx.coroutines.android)
     compileOnly(libs.google.errorprone.annotations)
+    detektPlugins(libs.detekt.compose.rules)
 
     // Testing
     testImplementation(libs.junit)

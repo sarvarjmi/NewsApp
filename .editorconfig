@@ -1,0 +1,60 @@
+root = true
+
+# All files
+[*]
+charset = utf-8
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Kotlin files
+[*.{kt,kts}]
+indent_size = 4
+indent_style = space
+max_line_length = 120
+ij_kotlin_allow_trailing_comma = true
+ij_kotlin_allow_trailing_comma_on_call_site = true
+
+# Naming conventions
+ij_kotlin_name_count_to_use_star_import = 5
+ij_kotlin_name_count_to_use_star_import_for_members = 3
+
+# Imports
+ij_kotlin_imports_layout = *,java.**,javax.**,kotlin.**,^
+
+# Line breaks
+ij_kotlin_line_break_after_multiline_let = true
+ij_kotlin_assignment_wrap = normal
+
+# Spaces
+ij_kotlin_spaces_around_when_keywords = true
+ij_kotlin_continuation_indent_size = 4
+
+# Composable
+ij_kotlin_method_parameters_new_line_when_multiple = true
+ij_kotlin_method_parameters_wrap = normal
+ij_kotlin_method_call_arguments_wrap = normal
+
+# XML files
+[*.xml]
+indent_size = 4
+indent_style = space
+max_line_length = 120
+
+# JSON files
+[*.json]
+indent_size = 2
+indent_style = space
+
+# Gradle files
+[*.gradle]
+indent_size = 4
+indent_style = space
+
+# Properties files
+[*.properties]
+indent_size = 2
+indent_style = space
+
+# Markdown files
+[*.md]
+trim_trailing_whitespace = false

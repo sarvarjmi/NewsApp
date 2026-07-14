@@ -28,8 +28,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import com.newsapp.R
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.newsapp.domain.model.Article
@@ -61,6 +62,9 @@ fun BookmarkScreen(
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val pullToRefreshState = rememberPullToRefreshState()
 
+    val removedMessage = stringResource(R.string.removed_from_bookmarks)
+    val undoLabel = stringResource(R.string.undo)
+
     // Side Effect handling for navigation and Snackbar feedback
     LaunchedEffect(viewModel.effect) {
         viewModel.effect.collect { effect ->
@@ -68,8 +72,8 @@ fun BookmarkScreen(
                 is BookmarkSideEffect.NavigateToDetail -> onNavigateToDetail(effect.article)
                 is BookmarkSideEffect.ShowUndoSnackbar -> {
                     val result = snackbarHostState.showSnackbar(
-                        message = "Removed from bookmarks",
-                        actionLabel = "Undo",
+                        message = removedMessage,
+                        actionLabel = undoLabel,
                         duration = SnackbarDuration.Short
                     )
                     if (result == SnackbarResult.ActionPerformed) {
@@ -86,16 +90,16 @@ fun BookmarkScreen(
             onDismissRequest = { viewModel.onEvent(BookmarkEvent.OnDismissDeleteDialog) },
             confirmButton = {
                 TextButton(onClick = { viewModel.onEvent(BookmarkEvent.OnConfirmDelete) }) {
-                    Text("Delete")
+                    Text(stringResource(R.string.delete))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { viewModel.onEvent(BookmarkEvent.OnDismissDeleteDialog) }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             },
-            title = { Text("Remove Bookmark?") },
-            text = { Text("Are you sure you want to remove this article from your bookmarks?") },
+            title = { Text(stringResource(R.string.remove_bookmark_title)) },
+            text = { Text(stringResource(R.string.remove_bookmark_message)) },
             shape = MaterialTheme.shapes.medium,
             containerColor = MaterialTheme.colorScheme.surface,
             titleContentColor = MaterialTheme.colorScheme.onSurface,
@@ -113,13 +117,13 @@ fun BookmarkScreen(
                 title = {
                     Column {
                         Text(
-                            text = "Bookmarks",
+                            text = stringResource(R.string.bookmarks),
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold
                         )
                         if (state.bookmarkCount > 0) {
                             Text(
-                                text = "${state.bookmarkCount} saved articles",
+                                text = stringResource(R.string.saved_articles, state.bookmarkCount),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -145,14 +149,14 @@ fun BookmarkScreen(
                     }
                     state.error != null -> {
                         ErrorView(
-                            message = state.error!!,
+                            message = state.error ?: "",
                             onRetry = { viewModel.onEvent(BookmarkEvent.OnRetryClicked) }
                         )
                     }
                     state.isEmpty -> {
                         EmptyState(
-                            message = "Your reading list is empty. Bookmark articles to read them offline later.",
-                            title = "No Bookmarks"
+                            message = stringResource(R.string.no_bookmarks_message),
+                            title = stringResource(R.string.no_bookmarks_title)
                         )
                     }
                     else -> {

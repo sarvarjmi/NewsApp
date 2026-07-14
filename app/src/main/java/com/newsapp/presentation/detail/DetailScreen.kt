@@ -55,7 +55,7 @@ import java.nio.charset.StandardCharsets
  * The Article Detail Screen.
  *
  * This screen provides an immersive reading experience for a news article.
- * 
+ *
  * @param article The news article to be displayed.
  * @param onBackClick Callback for navigating back.
  * @param onNavigateToWebView Callback to open the full article in an internal web view.
@@ -122,7 +122,7 @@ fun DetailScreen(
                     IconButton(onClick = { viewModel.onEvent(DetailEvent.OnBackClicked) }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Navigate Back"
+                            contentDescription = stringResource(R.string.navigate_back)
                         )
                     }
                 },
@@ -130,8 +130,8 @@ fun DetailScreen(
                     state.article?.let { currentArticle ->
                         IconButton(onClick = { viewModel.onEvent(DetailEvent.OnShareClicked(currentArticle)) }) {
                             Icon(
-                                imageVector = Icons.Default.Share, 
-                                contentDescription = "Share Article"
+                                imageVector = Icons.Default.Share,
+                                contentDescription = stringResource(R.string.share_article)
                             )
                         }
                         BookmarkButton(
@@ -156,17 +156,19 @@ fun DetailScreen(
                     )
                 }
                 state.article != null -> {
-                    DetailContent(
-                        article = state.article!!,
-                        readingTime = state.readingTime,
-                        onOpenInBrowser = { 
-                            viewModel.onEvent(DetailEvent.OnOpenInBrowserClicked(it)) 
-                        }
-                    )
+                    state.article?.let { article ->
+                        DetailContent(
+                            article = article,
+                            readingTime = state.readingTime,
+                            onOpenInBrowser = {
+                                viewModel.onEvent(DetailEvent.OnOpenInBrowserClicked(it))
+                            }
+                        )
+                    }
                 }
                 state.error != null -> {
                     ErrorView(
-                        message = state.error!!,
+                        message = state.error ?: "",
                         onRetry = { viewModel.onEvent(DetailEvent.OnRetryClicked) }
                     )
                 }
@@ -226,13 +228,13 @@ private fun DetailContent(
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = " • ${article.publishedAt}",
+                    text = stringResource(R.string.article_metadata_separator) + article.publishedAt,
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 readingTime?.let {
                     Text(
-                        text = " • $it",
+                        text = stringResource(R.string.article_metadata_separator) + it,
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -253,10 +255,10 @@ private fun DetailContent(
 
             // Primary Action
             PrimaryButton(
-                text = "Read Full Article",
+                text = stringResource(R.string.read_full_article),
                 onClick = { onOpenInBrowser(article.url) }
             )
-            
+
             Spacer(modifier = Modifier.height(MaterialThemeSpacing.large))
         }
     }
@@ -279,7 +281,7 @@ private fun DetailScreenContentPreview() {
         publishedAt = "2 hours ago",
         source = Source(id = "nasa", name = "NASA News")
     )
-    
+
     NewsAppTheme {
         Surface {
             DetailContent(

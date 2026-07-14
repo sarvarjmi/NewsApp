@@ -1,150 +1,268 @@
 [versions]
-# Build Tools
+# --- Build Tools ---
+# Android Gradle Plugin version for project build configuration
 agp = "9.2.1"
+# Kotlin language version for standard library and compiler (KMP Core)
 kotlin = "2.4.0"
+# Kotlin Symbol Processing (KSP) version for faster annotation processing (KMP Support: Android & iOS)
 ksp = "2.3.1"
+# Detekt version for static analysis
+detekt = "1.23.8"
+# Ktlint version for code formatting
+ktlint = "14.2.0"
+# Compose Detekt rules version
+composeDetekt = "0.6.2"
 
-# Core Libraries
+# --- Core Libraries ---
+# Core Kotlin extensions for Android features
 coreKtx = "1.19.0"
+# Lifecycle-aware components (KMP Support: Android & iOS)
 lifecycle = "2.11.0"
+# Activity implementation specifically for Jetpack Compose
 activityCompose = "1.13.0"
+# Support for Chrome Custom Tabs to open web links within the app
 androidxBrowser = "1.10.0"
+# App Startup library for managing component initialization at launch
 androidxStartup = "1.2.0"
+# Official SplashScreen API for branding and smooth launch transitions
 androidxSplashScreen = "1.2.0"
+# Profile Installer for installing Baseline Profiles to improve startup time
 androidxProfileInstaller = "1.4.1"
+# Macrobenchmarking library to measure app performance and scrolling
 androidxBenchmarkMacroJunit4 = "1.4.1"
+# Baseline Profile plugin for generating Ahead-of-Time (AOT) compilation profiles
 androidxBaselineProfile = "1.5.0-alpha07"
+# Framework for cross-app UI testing
 uiautomator = "2.4.0"
+# Preferences DataStore (KMP Support: Android & iOS)
 datastore = "1.1.2"
 
-# Compose
+# --- Compose ---
+# Bill of Materials (BOM) to manage versions for all Compose dependencies
 composeBom = "2026.06.01"
+# Type-safe navigation framework for Jetpack Compose
 navigationCompose = "2.9.8"
 
-# Dependency Injection
+# --- Dependency Injection ---
+# Dagger Hilt for automated dependency management in Android
 hilt = "2.60"
+# Integration between Hilt and Compose Navigation
 hiltNavigationCompose = "1.4.0"
 
-# Networking
+# --- Networking ---
+# Type-safe HTTP client for making API requests to NewsAPI
 retrofit = "3.0.0"
+# HTTP client engine and interceptor framework
 okhttp = "5.4.0"
+# Kotlin-native library for parsing JSON responses (KMP Support: Android & iOS)
 kotlinxSerialization = "1.11.0"
 
-# Database
+# --- Database ---
+# Room database for persistent local storage and offline caching (KMP Support: Android & iOS)
 room = "2.8.4"
 
-# Paging
+# --- Paging ---
+# Paging 3 library for handling infinite scrolling and large data sets (KMP Support: Android & iOS)
 paging = "3.5.0"
 
-# Images
+# --- Images ---
+# Image loading library optimized for Jetpack Compose and Kotlin Coroutines (KMP Support: Android & iOS)
 coil = "3.5.0"
 
-# Background
+# --- Background ---
+# WorkManager for managing reliable, constraint-aware background tasks
 workManager = "2.11.2"
 
-# Utilities
+# --- Utilities ---
+# Extensible logging utility for Android
 timber = "5.0.1"
+# Kotlin Coroutines for safe and efficient asynchronous programming (KMP Core)
 coroutines = "1.11.0"
 
-# Testing
+# --- Testing ---
+# Standard unit testing framework for JUnit 4
 junit = "4.13.2"
+# Advanced testing framework with support for JUnit 5 (Jupiter)
 junit5 = "6.1.1"
+# Android extension for JUnit runners
 junitVersion = "1.3.0"
+# UI testing framework for Android
 espressoCore = "3.7.0"
+# Mocking library specifically designed for Kotlin
 mockk = "1.14.11"
+# Small utility library for testing Kotlin Flows (Coroutines) (KMP Support: Android & iOS)
 turbine = "1.2.1"
+# Assertion library for more readable and expressive test cases
 truth = "1.4.5"
+# Automated memory leak detection for development builds
 leakcanary = "2.14"
+# JVM-based testing framework that mocks Android components
 robolectric = "4.16.1"
 
 [libraries]
-# AndroidX Core
+# --- AndroidX Core ---
+# Provides idiomatic Kotlin extensions for Android core framework APIs
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+# Lifecycle-aware components to manage data flow (KMP Support: Android & iOS)
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
+# Connects ViewModels with Compose screens to maintain UI state during rotations
 androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
+# Modern Activity base class that simplifies Jetpack Compose integration
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+# Used to launch full articles in high-performance Chrome Custom Tabs
 androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "androidxBrowser" }
+# Orchestrates component initialization to reduce app startup latency
 androidx-startup = { group = "androidx.startup", name = "startup-runtime", version.ref = "androidxStartup" }
+# Implementation of the modern Android 12+ splash screen behavior
 androidx-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "androidxSplashScreen" }
+# Enables the installation of performance profiles for better runtime execution
 androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "androidxProfileInstaller" }
+# Infrastructure for running macro-benchmarks in the benchmark module
 androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxBenchmarkMacroJunit4" }
 
-# Compose
+# --- Compose ---
+# Simplifies Compose versioning by aligning all UI libraries to a single release
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+# Core Compose UI components (Layout, Modifier, etc.)
 androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
+# Graphics processing for Compose (Colors, Brushes, Vector graphics)
 androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+# Development tools for deep UI debugging and inspection
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+# Required for rendering @Preview functions in the Android Studio IDE
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+# Manifest entries required for running Compose instrumented tests
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+# Test framework for writing JUnit 4 based UI tests in Compose
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+# Material Design 3 implementation for modern, adaptive Android UIs
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+# Provides a broad set of Material icons for improved UI visuals
 androidx-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
+# Handles type-safe screen transitions and deep links using Compose Navigation
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+# Persistent preferences storage (KMP Support: Android & iOS)
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 
-# Dependency Injection
+# --- Dependency Injection ---
+# Centralized dependency management to improve testability and scalability
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+# Compiler for processing Hilt annotations and generating dependency graph code
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+# Allows ViewModels to be retrieved within the Navigation graph via Hilt
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+# Integrates Hilt with WorkManager to support dependency injection in Workers
 androidx-hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltNavigationCompose" }
+# Auxiliary compiler for Hilt's AndroidX integrations
 androidx-hilt-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hiltNavigationCompose" }
 
-# Networking
+# --- Networking ---
+# Handles API communication with NewsAPI through type-safe interfaces
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+# Connects Retrofit with Kotlinx Serialization for seamless JSON mapping
 retrofit-serialization = { group = "com.squareup.retrofit2", name = "converter-kotlinx-serialization", version.ref = "retrofit" }
+# Low-level HTTP engine that powers the app's networking layer
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+# Logs all incoming and outgoing network traffic for debugging purposes
 okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
+# Kotlin-native library for converting JSON strings (KMP Support: Android & iOS)
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 
-# Database
+# --- Database ---
+# Main Room library (KMP Support: Android & iOS)
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+# Adds Coroutine and Flow support to Room for reactive database updates
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+# Processes Room annotations to generate optimized SQL and DAO code
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+# Integrates Paging 3 with Room to support offline-first infinite scrolling
 room-paging = { group = "androidx.room", name = "room-paging", version.ref = "room" }
 
-# Paging
+# --- Paging ---
+# Efficiently loads large datasets (KMP Support: Android & iOS)
 androidx-paging-runtime = { group = "androidx.paging", name = "paging-runtime", version.ref = "paging" }
+# Bridges the Paging library with Jetpack Compose LazyLists
 androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "paging" }
 
-# Images
+# --- Images ---
+# High-performance image loading (KMP Support: Android & iOS)
 coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
+# Network engine for Coil that uses OkHttp for image fetching
 coil-network-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
 
-# Background
+# --- Background ---
+# Schedules and executes background tasks like news refreshes and cache cleanup
 androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workManager" }
+# Framework for unit testing background work logic in isolation
 androidx-work-testing = { group = "androidx.work", name = "work-testing", version.ref = "workManager" }
 
-# Utilities
+# --- Utilities ---
+# Provides a structured way to manage logs with debug and production trees
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
+# Android-specific dispatcher for running coroutines on the Main thread
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+# Compose-specific Detekt rules for UI static analysis
+detekt-compose-rules = { group = "io.nlopez.compose.rules", name = "detekt", version.ref = "composeDetekt" }
 
-# Testing
+# --- Testing ---
+# Primary library for writing legacy and standard unit tests
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+# API for modern unit testing using JUnit 5 (Jupiter)
 jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit5" }
+# Engine responsible for executing JUnit 5 tests
 jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit5" }
+# Adds support for parameterized data-driven testing in JUnit 5
 jupiter-params = { group = "org.junit.jupiter", name = "junit-jupiter-params", version.ref = "junit5" }
+# Required to execute tests from the JUnit platform (Gradle/Android Studio)
 junitplatform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
+# Instrumented test runner for running JUnit tests on an emulator/device
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+# Primary framework for automated UI testing (Clicks, Swipes, Assertions)
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+# Kotlin-first mocking library for isolating components during unit tests
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+# Enables advanced mocking of Android components and final classes
 mockk-agent = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
+# Specialized library for testing Kotlin Flows (KMP Support: Android & iOS)
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
+# Google's assertion library for building human-readable test failures
 google-truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
+# Allows testing network code by running a local server with custom responses
 okhttp-mockwebserver = { group = "com.squareup.okhttp3", name = "mockwebserver", version.ref = "okhttp" }
+# Automates UI testing across system dialogs and multiple applications
 androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
+# Provides annotations to catch potential coding errors during compilation
 google-errorprone-annotations = { group = "com.google.errorprone", name = "error_prone_annotations", version = "2.50.0" }
+# Automatically detects and reports memory leaks in development builds
 leakcanary-android = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakcanary" }
+# Executes unit tests on the JVM while simulating the Android runtime
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
+# Utilities for controlling time and dispatchers during coroutine testing
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
+# Infrastructure for writing robust tests for Paging 3 data flows
 androidx-paging-test = { group = "androidx.paging", name = "paging-testing", version.ref = "paging" }
 
 [plugins]
+# --- Project Plugins ---
+# Configures the build for the main Android application module
 android-application = { id = "com.android.application", version.ref = "agp" }
+# Adds Kotlin language support (KMP Core)
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+# Optimizes the Kotlin compiler for Jetpack Compose UI code
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+# Enables automatic serialization (KMP Support: Android & iOS)
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+# Kotlin Symbol Processing (KSP) (KMP Support: Android & iOS)
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+# Configures Dagger Hilt dependency injection for the entire project
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+# Generates Room database schemas (KMP Support: Android & iOS)
 room = { id = "androidx.room", version.ref = "room" }
+# Orchestrates the generation of performance-boosting Baseline Profiles
 baselineProfile = { id = "androidx.baselineprofile", version.ref = "androidxBaselineProfile" }
+# Supports testing internal Android Gradle Plugin behavior
 agpTest = { id = "com.android.test", version.ref = "agp" }
+# Detekt plugin for static analysis
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+# Ktlint plugin for code formatting
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }

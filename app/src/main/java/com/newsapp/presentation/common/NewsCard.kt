@@ -86,9 +86,9 @@ fun NewsCard(
                     .clip(MaterialTheme.shapes.small),
                 contentScale = ContentScale.Crop,
             )
-            
+
             Spacer(modifier = Modifier.width(MaterialThemeSpacing.small))
-            
+
             Column(modifier = Modifier.weight(1f)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -101,16 +101,15 @@ fun NewsCard(
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.weight(1f)
                     )
-                    
+
                     BookmarkButton(
                         isBookmarked = isBookmarked,
-                        onClick = onBookmarkClick,
-                        modifier = Modifier.size(32.dp)
+                        onClick = onBookmarkClick
                     )
                 }
-                
+
                 Spacer(modifier = Modifier.height(MaterialThemeSpacing.extraSmall))
-                
+
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,
@@ -118,7 +117,7 @@ fun NewsCard(
                     overflow = TextOverflow.Ellipsis,
                     fontWeight = FontWeight.SemiBold
                 )
-                
+
                 if (description != null) {
                     Spacer(modifier = Modifier.height(MaterialThemeSpacing.extraSmall))
                     Text(
@@ -129,9 +128,9 @@ fun NewsCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                
+
                 Spacer(modifier = Modifier.height(MaterialThemeSpacing.small))
-                
+
                 Text(
                     text = date,
                     style = MaterialTheme.typography.labelSmall,

@@ -9,4 +9,6 @@ plugins {
     alias(libs.plugins.room) apply false
     alias(libs.plugins.baselineProfile) apply false
     alias(libs.plugins.agpTest) apply false
+    alias(libs.plugins.detekt)
+    alias(libs.plugins.ktlint)
 }

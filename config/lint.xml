@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- Severity overrides -->
+    <issue id="HardcodedText" severity="error" />
+    <issue id="ContentDescription" severity="warning" />
+    <issue id="UnusedResources" severity="warning" />
+    <issue id="IconMissingDensityFolder" severity="ignore" />
+    <issue id="GoogleAppIndexingWarning" severity="ignore" />
+
+    <!-- Security -->
+    <issue id="AllowBackup" severity="error" />
+    <issue id="ExportedService" severity="error" />
+
+    <!-- Performance -->
+    <issue id="UnusedIds" severity="warning" />
+    <issue id="Overdraw" severity="warning" />
+</lint>

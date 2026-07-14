@@ -23,6 +23,8 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
+import androidx.compose.ui.res.stringResource
+import com.newsapp.R
 import com.newsapp.domain.model.Article
 import com.newsapp.ui.theme.MaterialThemeSpacing
 
@@ -67,8 +69,8 @@ fun NewsPagingList(
 
         // Main paginated items with Performance Optimizations
         items(
-            count = articles.itemCount, 
-            key = { index -> 
+            count = articles.itemCount,
+            key = { index ->
                 val article = articles.peek(index)
                 // Combine URL and index to guarantee uniqueness even if the API returns duplicate articles.
                 // We use peek() to avoid triggering page loads during key calculation.
@@ -86,7 +88,7 @@ fun NewsPagingList(
                     onBookmarkClick = { onBookmarkClick(article) },
                     onClick = { onArticleClick(article) },
                     modifier = Modifier.padding(
-                        horizontal = MaterialThemeSpacing.medium, 
+                        horizontal = MaterialThemeSpacing.medium,
                         vertical = MaterialThemeSpacing.small
                     ),
                     description = article.description
@@ -107,23 +109,26 @@ fun NewsPagingList(
                     loadState.refresh is LoadState.Error -> {
                         val error = loadState.refresh as LoadState.Error
                         ErrorView(
-                            message = error.error.localizedMessage ?: "Failed to load news", 
+                            message = error.error.localizedMessage ?: stringResource(R.string.retry),
                             onRetry = onRetry
                         )
                     }
 
                     // Success but empty: Show EmptyState
                     loadState.refresh is LoadState.NotLoading && itemCount == 0 -> {
-                        EmptyState(message = "No articles found.", title = "Nothing here")
+                        EmptyState(
+                            message = stringResource(R.string.no_results_found),
+                            title = stringResource(R.string.nothing_here)
+                        )
                     }
 
                     // Pagination Loading (Append)
                     loadState.append is LoadState.Loading -> {
                         Box(
-                            Modifier.fillMaxWidth().padding(16.dp), 
+                            Modifier.fillMaxWidth().padding(MaterialThemeSpacing.medium),
                             contentAlignment = Alignment.Center
-                        ) { 
-                            CircularProgressIndicator(Modifier.size(24.dp), strokeWidth = 2.dp) 
+                        ) {
+                            CircularProgressIndicator(Modifier.size(24.dp), strokeWidth = 2.dp)
                         }
                     }
                 }

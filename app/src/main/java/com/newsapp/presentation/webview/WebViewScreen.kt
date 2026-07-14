@@ -40,11 +40,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.res.stringResource
+import com.newsapp.R
 import com.newsapp.presentation.common.ErrorView
 
 /**
  * The WebView Screen implementation for NewsApp.
- * 
+ *
  * Includes comprehensive lifecycle management, history support, and security.
  */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,7 +59,7 @@ fun WebViewScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    
+
     // Performance: Keep reference to WebView for history management
     var webViewInstance by remember { mutableStateOf<WebView?>(null) }
 
@@ -110,16 +112,22 @@ fun WebViewScreen(
                     IconButton(onClick = { viewModel.onEvent(WebViewEvent.OnBackPressed) }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(R.string.back)
                         )
                     }
                 },
                 actions = {
                     IconButton(onClick = { viewModel.onEvent(WebViewEvent.OnShare) }) {
-                        Icon(imageVector = Icons.Default.Share, contentDescription = "Share")
+                        Icon(
+                            imageVector = Icons.Default.Share,
+                            contentDescription = stringResource(R.string.share)
+                        )
                     }
                     IconButton(onClick = { viewModel.onEvent(WebViewEvent.OnOpenInBrowser) }) {
-                        Icon(imageVector = Icons.Default.OpenInBrowser, contentDescription = "Open in Browser")
+                        Icon(
+                            imageVector = Icons.Default.OpenInBrowser,
+                            contentDescription = stringResource(R.string.open_in_browser)
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -146,7 +154,7 @@ fun WebViewScreen(
             Box(modifier = Modifier.weight(1f)) {
                 if (state.error != null) {
                     ErrorView(
-                        message = state.error!!,
+                        message = state.error ?: "",
                         onRetry = { viewModel.onEvent(WebViewEvent.OnRetry) }
                     )
                 } else {
@@ -186,18 +194,18 @@ private fun WebViewContainer(
                     setSupportZoom(true)
                     builtInZoomControls = true
                     displayZoomControls = false
-                    
+
                     // Security
                     allowFileAccess = false
                     allowContentAccess = false
-                    
+
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                         safeBrowsingEnabled = true
                     }
-                    
+
                     mixedContentMode = android.webkit.WebSettings.MIXED_CONTENT_NEVER_ALLOW
                 }
-                
+
                 webViewClient = webViewClientFactory.create(onEvent)
                 webChromeClient = object : WebChromeClient() {
                     override fun onProgressChanged(view: WebView?, newProgress: Int) {

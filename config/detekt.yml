@@ -1,0 +1,79 @@
+build:
+  maxIssues: 0
+  excludeCorrectable: false
+
+complexity:
+  active: true
+  ComplexCondition:
+    active: true
+    threshold: 4
+  LongMethod:
+    active: true
+    threshold: 60
+  LongParameterList:
+    active: true
+    functionThreshold: 10
+    constructorThreshold: 10
+    ignoreDefaultParameters: true
+  LargeClass:
+    active: true
+    threshold: 600
+
+naming:
+  active: true
+  ClassNaming:
+    active: true
+    classPattern: '[A-Z][a-zA-Z0-9]*'
+  FunctionNaming:
+    active: true
+    functionPattern: '[a-z][a-zA-Z0-9]*'
+    excludeClassPattern: '.*Test'
+  VariableNaming:
+    active: true
+    variablePattern: '[a-z][a-zA-Z0-9]*'
+  PackageNaming:
+    active: true
+    packagePattern: '[a-z]+(\.[a-z][A-Za-z0-9]*)*'
+
+style:
+  active: true
+  MaxLineLength:
+    active: true
+    maxLineLength: 120
+  UnusedImports:
+    active: true
+  WildcardImport:
+    active: true
+  MagicNumber:
+    active: true
+    ignoreNumbers:
+      - '-1'
+      - '0'
+      - '1'
+      - '2'
+    ignoreEnums: true
+    ignoreAnnotation: true
+
+Compose:
+  ComposableNaming:
+    active: true
+  ComposableParamOrder:
+    active: true
+  ContentEmitterReturningValues:
+    active: true
+  ModifierMissing:
+    active: true
+  ModifierReused:
+    active: true
+  MultipleEmitters:
+    active: true
+  MutableStateAutoboxing:
+    active: true
+  PreviewPublic:
+    active: true
+  RememberMissing:
+    active: true
+  ViewModelForwarding:
+    active: true
+  ViewModelInjection:
+    active: true

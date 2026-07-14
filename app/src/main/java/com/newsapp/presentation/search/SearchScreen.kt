@@ -23,6 +23,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.compose.ui.res.stringResource
+import com.newsapp.R
 import com.newsapp.domain.model.Article
 import com.newsapp.presentation.common.NewsPagingList
 import com.newsapp.presentation.common.SearchBar
@@ -30,7 +32,7 @@ import com.newsapp.ui.theme.MaterialThemeSpacing
 
 /**
  * The Search Screen implementation for NewsApp.
- * 
+ *
  * Performance Optimizations:
  * 1. [rememberLazyListState]: Persists result scroll position.
  * 2. Shared Paging Logic: Uses [NewsPagingList] with stable keys and content types.
@@ -44,11 +46,11 @@ fun SearchScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val searchResults = viewModel.searchResults.collectAsLazyPagingItems()
-    
+
     val lazyListState = rememberLazyListState()
     val focusRequester = remember { FocusRequester() }
     val pullToRefreshState = rememberPullToRefreshState()
-    
+
     val isRefreshing = searchResults.loadState.refresh is LoadState.Loading && searchResults.itemCount > 0
 
     LaunchedEffect(viewModel.effect) {
@@ -68,7 +70,7 @@ fun SearchScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Search",
+                        text = stringResource(R.string.search),
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -92,13 +94,13 @@ fun SearchScreen(
                     onClear = { viewModel.onEvent(SearchEvent.OnQueryChanged("")) },
                     focusRequester = focusRequester
                 )
-                
+
                 Spacer(modifier = Modifier.height(MaterialThemeSpacing.medium))
-                
+
                 NewsPagingList(
                     articles = searchResults,
                     lazyListState = lazyListState,
-                    onArticleClick = { article -> 
+                    onArticleClick = { article ->
                         viewModel.onEvent(SearchEvent.OnArticleClicked(article))
                     },
                     onBookmarkClick = { article ->

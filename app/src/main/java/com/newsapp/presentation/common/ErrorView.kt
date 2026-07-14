@@ -20,12 +20,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.newsapp.R
 import com.newsapp.ui.theme.MaterialThemeSpacing
 import com.newsapp.ui.theme.NewsAppTheme
 
 /**
  * A full-screen error view with retry capability.
- * 
+ *
  * Automatically adapts its layout for phone and tablet form factors.
  */
 @Composable
@@ -55,27 +57,27 @@ fun ErrorView(
                 modifier = Modifier.size(iconSize),
                 tint = MaterialTheme.colorScheme.error
             )
-            
+
             Spacer(modifier = Modifier.height(MaterialThemeSpacing.medium))
-            
+
             Text(
-                text = "Oops! Something went wrong",
+                text = stringResource(R.string.error_title),
                 style = if (isTablet) MaterialTheme.typography.headlineMedium else MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onBackground
             )
-            
+
             Spacer(modifier = Modifier.height(MaterialThemeSpacing.small))
-            
+
             Text(
                 text = message,
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            
+
             Spacer(modifier = Modifier.height(MaterialThemeSpacing.large))
-            
+
             RetryButton(
                 onClick = onRetry,
                 modifier = Modifier.padding(horizontal = if (isTablet) 64.dp else MaterialThemeSpacing.extraLarge)
